@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lockai | Advanced Security Assessment</title>
+    <title>Lockai | Global Security Assessment</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- React and ReactDOM -->
@@ -13,18 +13,24 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Latin, Cyrillic, Japanese, Simplified Chinese, Devanagari (Hindi) -->
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+SC:wght@400;700&family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+        
+        body { font-family: 'Plus Jakarta Sans', 'Noto Sans SC', 'Noto Sans JP', 'Noto Sans Devanagari', sans-serif; }
+        
         .fade-in { animation: fadeIn 0.4s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        /* Mobile Hover Fix */
+        @media (hover: hover) {
+            .option-card:hover {
+                border-color: #6366f1;
+                background-color: #eef2ff;
+            }
+            .option-dot-container:hover { border-color: #6366f1; }
+            .option-dot:hover { opacity: 1; }
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen">
@@ -34,293 +40,403 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // --- IMAGE ASSETS (Reliable Unsplash IDs) ---
-        const IMAGES = {
-            phishing: "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80",
-            mobile: "https://images.unsplash.com/photo-1512314889357-e157c22f938d?auto=format&fit=crop&w=800&q=80",
-            crypto: "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=800&q=80",
-            office: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=80",
-            hacker: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80",
-            shopping: "https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?auto=format&fit=crop&w=800&q=80",
-            social: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80",
-            general: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80"
+        // --- I18N DICTIONARIES ---
+        const UI_TEXT = {
+            en: {
+                title: "Lockai",
+                subtitle: "Global Security Assessment",
+                startBtn: "Start Assessment",
+                timeEst: "Takes ~4 minutes",
+                heroTitle1: "Human error is the",
+                heroTitle2: "#1 security vulnerability.",
+                heroDesc: "Lockai tests your ability to detect sophisticated social engineering, from deepfake voice cloning to subtle recovery scams.",
+                statScenarios: "Scenarios",
+                statAI: "Yong Tau Foo Powered",
+                statPrivate: "100% Private",
+                progress: "In Progress",
+                qPrefix: "Question",
+                back: "Back",
+                next: "Next",
+                finish: "Finish",
+                scoreTitle: "Lockai Security Score",
+                meaning: "What does this mean?",
+                meaningDesc: "Modern scams rely on urgency and context, not just fake links.",
+                unlockTitle: "See your detailed mistakes",
+                unlockDesc: "Unlock a question-by-question breakdown and learn how to recognize the traps you fell for.",
+                unlockBtn: "Unlock Now - $4.99",
+                premiumUnlocked: "Full Analysis Unlocked",
+                perfect: "Perfect",
+                risk: "Risk Detect",
+                expert: "Expert Analysis",
+                correctAction: "The correct action was",
+                restart: "Start New Assessment",
+                payTitle: "Unlock Your Analysis",
+                payDesc: "See exactly where you are vulnerable and get your personalized defense strategy.",
+                payItem: "Detailed Risk Report",
+                payBtn: "Pay & Unlock",
+                processing: "Processing...",
+                scamProof: "Security Architect",
+                cautious: "Cyber Aware",
+                vulnerable: "Vulnerable",
+                highRisk: "High Risk Target",
+                advice1: "Outstanding. You spotted the subtlest red flags.",
+                advice2: "You are safe from most scams, but a targeted attack might trick you.",
+                advice3: "You have dangerous blind spots. Scammers can easily exploit your trust.",
+                advice4: "You are statistically highly likely to lose money to fraud soon.",
+                leaderboardTitle: "Global Leaderboard",
+                rank: "Rank",
+                user: "User",
+                score: "Score",
+                you: "You"
+            },
+            hi: {
+                title: "Lockai",
+                subtitle: "Global Suraksha Assessment",
+                startBtn: "Shuru Karein",
+                timeEst: "~4 minute lagenge",
+                heroTitle1: "Insani galti sabse",
+                heroTitle2: "badi suraksha kami hai.",
+                heroDesc: "Lockai aapki kshamata test karta hai ki aap sophisticated scams, jaise AI voice cloning aur recovery scams ko pehchan sakte hain ya nahi.",
+                statScenarios: "Scenarios",
+                statAI: "Yong Tau Foo Powered",
+                statPrivate: "100% Niji",
+                progress: "Chal raha hai",
+                qPrefix: "Sawal",
+                back: "Peeche",
+                next: "Aage",
+                finish: "Khatam",
+                scoreTitle: "Lockai Suraksha Score",
+                meaning: "Iska kya matlab hai?",
+                meaningDesc: "Aajkal ke scams sirf fake links par nahi, balki jaldbazi aur context par nirbhar karte hain.",
+                unlockTitle: "Apni galtiyan dekhein",
+                unlockDesc: "Har sawal ka detailed breakdown dekhein aur samjhein ki aap kahan phase.",
+                unlockBtn: "Unlock Karein - $4.99",
+                premiumUnlocked: "Poora Analysis Khul Gaya",
+                perfect: "Behtareen",
+                risk: "Khatra",
+                expert: "Expert Raye",
+                correctAction: "Sahi kadam ye tha",
+                restart: "Dobara Test Karein",
+                payTitle: "Analysis Unlock Karein",
+                payDesc: "Janein ki aap kahan kamzor hain aur apni suraksha strategy banayein.",
+                payItem: "Detailed Risk Report",
+                payBtn: "Pay & Unlock",
+                processing: "Process ho raha hai...",
+                scamProof: "Suraksha Architect",
+                cautious: "Satark",
+                vulnerable: "Kamzor",
+                highRisk: "High Risk Target",
+                advice1: "Shandaar. Aapne sabse barik khatron ko bhi pehchan liya.",
+                advice2: "Aap zyadatar scams se surakshit hain, lekin targeted attack aapko phasa sakta hai.",
+                advice3: "Aapke kuch dangerous blind spots hain. Scammers aasaani se aapka fayda utha sakte hain.",
+                advice4: "Statistics ke hisab se, jald hi aapke sath fraud hone ki sambhavna hai.",
+                leaderboardTitle: "Global Leaderboard",
+                rank: "Rank",
+                user: "User",
+                score: "Score",
+                you: "Aap"
+            },
+            zh: {
+                title: "Lockai",
+                subtitle: "全球安全评估",
+                startBtn: "开始评估",
+                timeEst: "耗时约 4 分钟",
+                heroTitle1: "人为错误是",
+                heroTitle2: "第一大安全漏洞。",
+                heroDesc: "Lockai 测试您识别复杂社会工程诈骗的能力，从 AI 语音克隆到隐蔽的追回资金诈骗。",
+                statScenarios: "真实场景",
+                statAI: "Yong Tau Foo 驱动",
+                statPrivate: "100% 隐私",
+                progress: "进行中",
+                qPrefix: "问题",
+                back: "返回",
+                next: "下一步",
+                finish: "完成",
+                scoreTitle: "Lockai 安全评分",
+                meaning: "这通过意味着什么？",
+                meaningDesc: "现代诈骗依赖于紧迫感和情境，而不仅仅是假链接。",
+                unlockTitle: "查看您的详细错误",
+                unlockDesc: "解锁逐题分析，了解您是如何掉入陷阱的。",
+                unlockBtn: "立即解锁 - $4.99",
+                premiumUnlocked: "完整分析已解锁",
+                perfect: "完美",
+                risk: "风险检测",
+                expert: "专家分析",
+                correctAction: "正确的做法是",
+                restart: "开始新的评估",
+                payTitle: "解锁您的分析报告",
+                payDesc: "查看您的具体漏洞并获取个性化防御策略。",
+                payItem: "详细风险报告",
+                payBtn: "支付并解锁",
+                processing: "处理中...",
+                scamProof: "安全架构师",
+                cautious: "网络警觉",
+                vulnerable: "易受攻击",
+                highRisk: "高风险目标",
+                advice1: "非常出色。您发现了最细微的危险信号。",
+                advice2: "您对大多数诈骗是安全的，但针对性攻击可能会欺骗您。",
+                advice3: "您有危险的盲点。诈骗者很容易利用您的信任。",
+                advice4: "从统计上看，您近期极有可能因诈骗遭受损失。",
+                leaderboardTitle: "全球排行榜",
+                rank: "排名",
+                user: "用户",
+                score: "分数",
+                you: "你"
+            },
+            ja: {
+                title: "Lockai",
+                subtitle: "セキュリティ診断",
+                startBtn: "診断を開始",
+                timeEst: "所要時間 約4分",
+                heroTitle1: "人為的なミスは",
+                heroTitle2: "最大のセキュリティ脆弱性です。",
+                heroDesc: "Lockaiは、AI音声クローニングから巧妙な回復詐欺まで、高度なソーシャルエンジニアリングを検出する能力をテストします。",
+                statScenarios: "シナリオ",
+                statAI: "Yong Tau Foo搭載",
+                statPrivate: "100% プライバシー",
+                progress: "進行中",
+                qPrefix: "質問",
+                back: "戻る",
+                next: "次へ",
+                finish: "完了",
+                scoreTitle: "Lockai セキュリティスコア",
+                meaning: "スコアの意味",
+                meaningDesc: "現代の詐欺は、偽のリンクだけでなく、緊急性と文脈に依存しています。",
+                unlockTitle: "詳細な分析を見る",
+                unlockDesc: "質問ごとの内訳を解除し、どの罠に陥ったかを学びましょう。",
+                unlockBtn: "今すぐ解除 - $4.99",
+                premiumUnlocked: "完全分析 解除済み",
+                perfect: "完璧",
+                risk: "リスク検出",
+                expert: "専門家の分析",
+                correctAction: "正解のアクション:",
+                restart: "診断をやり直す",
+                payTitle: "分析を解除",
+                payDesc: "脆弱性を特定し、パーソナライズされた防御戦略を入手してください。",
+                payItem: "詳細リスクレポート",
+                payBtn: "支払い & 解除",
+                processing: "処理中...",
+                scamProof: "セキュリティ設計者",
+                cautious: "サイバー警戒",
+                vulnerable: "脆弱",
+                highRisk: "高リスク",
+                advice1: "素晴らしい。あなたは最も微細な危険信号を見抜きました。",
+                advice2: "ほとんどの詐欺からは安全ですが、標的型攻撃には騙される可能性があります。",
+                advice3: "危険な盲点があります。詐欺師はあなたの信頼を簡単に利用できます。",
+                advice4: "統計的に見て、近いうちに詐欺被害に遭う可能性が非常に高いです。",
+                leaderboardTitle: "グローバルランキング",
+                rank: "順位",
+                user: "ユーザー",
+                score: "スコア",
+                you: "あなた"
+            },
+            ru: {
+                title: "Lockai",
+                subtitle: "Оценка безопасности",
+                startBtn: "Начать тест",
+                timeEst: "~4 минуты",
+                heroTitle1: "Человеческий фактор —",
+                heroTitle2: "главная уязвимость.",
+                heroDesc: "Lockai проверяет вашу способность обнаруживать социальную инженерию: от дипфейков голоса до скрытых схем возврата средств.",
+                statScenarios: "Сценарии",
+                statAI: "Yong Tau Foo Powered",
+                statPrivate: "100% Анонимно",
+                progress: "В процессе",
+                qPrefix: "Вопрос",
+                back: "Назад",
+                next: "Далее",
+                finish: "Завершить",
+                scoreTitle: "Оценка безопасности",
+                meaning: "Что это значит?",
+                meaningDesc: "Современные мошенники полагаются на срочность и контекст, а не только на фальшивые ссылки.",
+                unlockTitle: "Подробный разбор ошибок",
+                unlockDesc: "Разблокируйте анализ каждого вопроса и узнайте, как распознать ловушки.",
+                unlockBtn: "Разблокировать - $4.99",
+                premiumUnlocked: "Полный анализ разблокирован",
+                perfect: "Идеально",
+                risk: "Риск",
+                expert: "Мнение эксперта",
+                correctAction: "Правильное действие:",
+                restart: "Пройти заново",
+                payTitle: "Разблокировать анализ",
+                payDesc: "Узнайте свои слабые места и получите стратегию защиты.",
+                payItem: "Отчет о рисках",
+                payBtn: "Оплатить и открыть",
+                processing: "Обработка...",
+                scamProof: "Архитектор защиты",
+                cautious: "Бдительный",
+                vulnerable: "Уязвимый",
+                highRisk: "Высокий риск",
+                advice1: "Выдающийся результат. Вы заметили самые тонкие тревожные сигналы.",
+                advice2: "Вы защищены от большинства мошенничеств, но целевая атака может вас обмануть.",
+                advice3: "У вас есть опасные слепые зоны. Мошенники могут легко воспользоваться вашим доверием.",
+                advice4: "Статистически очень высока вероятность того, что вы скоро потеряете деньги.",
+                leaderboardTitle: "Таблица лидеров",
+                rank: "Место",
+                user: "Имя",
+                score: "Счет",
+                you: "Вы"
+            }
+        };
+
+        const QUESTIONS_DB = {
+            en: [
+                { id: 1, category: "Pig Butchering / Wrong Number", scenario: "You receive a text from an unknown number: 'Hey Sarah, are we still on for yoga?'. You are not Sarah.", options: [{ text: "Reply 'Wrong number, sorry!' to be polite.", score: 2 }, { text: "Ignore and delete the message immediately.", score: 5 }, { text: "Reply asking who this is; maybe it's an old friend.", score: 0 }] },
+                { id: 2, category: "AI Voice Cloning", scenario: "You receive a call from your 'grandson'. He sounds panicked, crying, saying he's in jail. The voice sounds exactly like him.", options: [{ text: "Immediately ask for the wiring instructions to help him.", score: 0 }, { text: "Hang up and call his personal mobile number to verify.", score: 5 }, { text: "Ask him to put the police officer on the phone.", score: 2 }] },
+                { id: 3, category: "Quishing (QR Phishing)", scenario: "You are at a parking meter. The card slot is jammed, but there is a sticker with a QR code that says 'Scan to Pay Online'.", options: [{ text: "Scan the QR code and pay via the website it opens.", score: 0 }, { text: "Google the official parking app for your city and pay there.", score: 5 }, { text: "Look for another meter nearby.", score: 2 }] },
+                { id: 4, category: "Employment / Fake Check", scenario: "A recruiter on LinkedIn offers you a remote data entry job. They send a check for $2,000 to buy a laptop from their 'vendor'.", options: [{ text: "Deposit the check and buy the equipment.", score: 0 }, { text: "Wait for the check to clear, then buy the equipment.", score: 2 }, { text: "Refuse. Legitimate companies buy and ship equipment themselves.", score: 5 }] },
+                { id: 5, category: "Tech Support Fraud", scenario: "A popup appears on your computer with a loud siren: 'VIRUS DETECTED. Call Microsoft Support immediately.'", options: [{ text: "Call the number on the screen to fix it fast.", score: 0 }, { text: "Force restart your computer and run your own antivirus.", score: 5 }, { text: "Click the 'Close' button inside the popup window.", score: 2 }] },
+                { id: 6, category: "Romance / Crypto Investment", scenario: "You meet someone on a dating app. Things move fast. After a week, they mention they made $50k trading crypto and want to teach you.", options: [{ text: "Ask them to explain how it works and try with a small amount.", score: 0 }, { text: "Politely listen but keep your finances separate.", score: 2 }, { text: "Stop communication immediately. This is a romance scam.", score: 5 }] },
+                { id: 7, category: "Phishing", scenario: "You get an email from 'Netflix': 'Payment declined. Update info to keep watching.' The sender address is `support-netflix@gmail.com`.", options: [{ text: "Click the link and log in to check your account status.", score: 0 }, { text: "Hover over the link to see where it goes.", score: 2 }, { text: "Mark as spam. Netflix doesn't use Gmail addresses.", score: 5 }] },
+                { id: 8, category: "Crypto Giveaway / Deepfake", scenario: "A famous CEO posts a video on Twitter offering to double any ETH/Bitcoin sent to a specific wallet address.", options: [{ text: "Send a small amount to test if it's real.", score: 0 }, { text: "Assume the account was hacked or it's a deepfake.", score: 5 }, { text: "Read the comments to see if others got paid.", score: 2 }] },
+                { id: 9, category: "MFA Fatigue", scenario: "You receive 10 notifications on your phone asking to approve a login. Then, you get a call from 'IT Support' asking for the code to stop the spam.", options: [{ text: "Give them the code to make the notifications stop.", score: 0 }, { text: "Deny the requests and change your password immediately.", score: 5 }, { text: "Turn off your phone for an hour.", score: 2 }] },
+                { id: 10, category: "Fake Course / Online Learning", scenario: "Your friend's wife wants to buy an expensive $2,000 online lesson she saw. The website looks a bit shady and unprofessional, but claims to have 'exclusive secret' content.", options: [{ text: "Tell her to trust her gut. If the site looks shady, it's likely a scam or low quality.", score: 5 }, { text: "Encourage her to buy it. 'Exclusive' content often uses underground websites.", score: 0 }, { text: "Tell her to read the reviews on the website's own 'Testimonials' page to verify it.", score: 2 }] },
+                { id: 11, category: "Rental Scam", scenario: "You find a great apartment for rent at a very low price. The landlord says they are out of town but can mail you the keys if you pay the deposit first.", options: [{ text: "Pay the deposit via a secure method like PayPal.", score: 2 }, { text: "Pay via Zelle/CashApp as requested to secure the spot.", score: 0 }, { text: "Refuse to pay anything until you see the inside of the unit.", score: 5 }] },
+                { id: 12, category: "Overpayment Scam", scenario: "You are selling a couch online. A buyer offers to pay full price + extra for movers, but they need you to pay the movers first via Zelle.", options: [{ text: "Agree, as long as you get the money first.", score: 0 }, { text: "Tell them cash only, in person.", score: 5 }, { text: "Ask to speak to the movers directly.", score: 2 }] },
+                { id: 13, category: "Refund / Invoice Scam", scenario: "You receive an email invoice for 'Geek Squad Renewal' for $399. You don't have Geek Squad.", options: [{ text: "Call the phone number in the email to dispute the charge.", score: 0 }, { text: "Ignore it. It's a fake invoice designed to panic you.", score: 5 }, { text: "Reply to the email asking for details.", score: 2 }] },
+                { id: 14, category: "Business Email Compromise", scenario: "Your boss emails you urgently: 'I'm in a meeting. I need you to buy 5 Apple Gift Cards for a client. I'll reimburse you.'", options: [{ text: "Buy them quickly to impress the boss.", score: 0 }, { text: "Call or message your boss on a separate internal channel to verify.", score: 5 }, { text: "Ask the email sender for more details.", score: 2 }] },
+                { id: 15, category: "Data Harvesting", scenario: "A viral Facebook post asks: 'What was the name of your first pet? Mine was Fluffy!'", options: [{ text: "Comment with your pet's name for fun.", score: 0 }, { text: "Share the post with friends.", score: 0 }, { text: "Scroll past. These are used to guess security questions.", score: 5 }] },
+                { id: 16, category: "Evil Twin WiFi", scenario: "You are at the airport. You see a WiFi network named 'Free_Airport_WiFi_Official'. It is an 'Open' network.", options: [{ text: "Connect and check your bank balance.", score: 0 }, { text: "Connect but use a VPN immediately.", score: 2 }, { text: "Use your cellular data instead.", score: 5 }] },
+                { id: 17, category: "Fleeceware", scenario: "You are downloading an authenticator app. One app asks for a weekly subscription of $5 to generate codes.", options: [{ text: "Pay it, security is worth the money.", score: 0 }, { text: "Download Google or Microsoft Authenticator instead (Free).", score: 5 }, { text: "Read the reviews first.", score: 2 }] },
+                { id: 18, category: "Bank Impersonation", scenario: "Your bank calls. 'There is fraud on your account. Read me the 6-digit code sent to your text to verify your identity.'", options: [{ text: "Read them the code immediately.", score: 0 }, { text: "Hang up. Call the number on the back of your debit card.", score: 5 }, { text: "Ask them to verify your address first.", score: 2 }] },
+                { id: 19, category: "Investment Group Scam", scenario: "You get added to a WhatsApp group about 'Insider Stock Tips' with 200 other people.", options: [{ text: "Stay in the group to see what tips they give.", score: 2 }, { text: "Report and exit the group immediately.", score: 5 }, { text: "Message the admin to ask who added you.", score: 0 }] },
+                { id: 20, category: "Search Engine Poisoning", scenario: "You search for 'Airline Customer Support' on Google. You dial the first number that appears with an 'Ad' tag.", options: [{ text: "Trust it because it's on Google.", score: 0 }, { text: "Scroll down to the official website to find the number.", score: 5 }, { text: "Check if the number starts with 1-800.", score: 2 }] },
+                { id: 21, category: "Recovery Scam (Advanced)", scenario: "You lost money to a scam last year. You suddenly receive an email from a 'Blockchain Recovery Firm' claiming they found your stolen funds on a frozen ledger and can retrieve it for a 5% legal fee.", options: [{ text: "Respond immediately; 5% is a small price to get your money back.", score: 0 }, { text: "Engage with them but refuse to pay upfront fees.", score: 2 }, { text: "Mark as spam. Recovery firms cannot access frozen blockchains; this is a 'piggyback' scam.", score: 5 }] },
+                { id: 22, category: "Push Notification / Social Engineering", scenario: "You get a notification on your phone: 'Attempted login from Russia'. You click 'Deny'. Immediately, your phone rings. It's 'Apple Support' calling to help you secure the account because of the attempt you just denied.", options: [{ text: "Answer and follow their instructions to secure the account.", score: 0 }, { text: "Hang up. Scammers trigger the notification to make their call seem legitimate.", score: 5 }, { text: "Ask them for their employee ID before proceeding.", score: 2 }] },
+                { id: 23, category: "Task Scam / Sunk Cost", scenario: "You accepted a freelance job 'optimizing apps'. You log into a dashboard and see you've earned $800 in 2 days. To withdraw the salary, the platform says you must deposit $50 to 'reset the wallet address', which will be refunded.", options: [{ text: "Deposit the $50; you are still up $750 profit.", score: 0 }, { text: "Contact customer support to deduct the $50 from your earnings.", score: 2 }, { text: "Stop. Legitimate jobs never require you to pay money to get paid.", score: 5 }] },
+                { id: 24, category: "Calendar Virus Injection", scenario: "Your iPhone Calendar suddenly fills up with events saying: 'YOUR PHONE IS INFECTED - CLICK TO CLEAN'. You did not accept any calendar invites recently.", options: [{ text: "Click the link in the event to install the cleaning tool.", score: 0 }, { text: "Go to Settings > Calendar > Accounts and delete any subscribed calendars you don't recognize.", score: 5 }, { text: "Factory reset your phone immediately.", score: 2 }] },
+                { id: 25, category: "Business Email Compromise (Hijack)", scenario: "You run a small business. A long-time vendor emails you. The conversation history is correct, but they say: 'Our bank is auditing accounts, please use this new account number for the invoice attached.'", options: [{ text: "Update the bank details and pay the invoice to avoid late fees.", score: 0 }, { text: "Call the vendor on a known, previously used number (not the one in the email) to verbally confirm.", score: 5 }, { text: "Reply to the email asking for a signed letter from their bank.", score: 2 }] }
+            ],
+            hi: [
+                { id: 1, category: "Pig Butchering / Galat Number Scam", scenario: "Aapko ek anjaan number se message aata hai: 'Hey Sarah, kya hum yoga ke liye ja rahe hain?'. Aap Sarah nahi hain.", options: [{ text: "'Wrong number, sorry!' reply karein.", score: 2 }, { text: "Ignore karein aur message ko turant delete karein.", score: 5 }, { text: "Poochein ki ye kaun hai; shayad koi purana dost ho.", score: 0 }] },
+                { id: 2, category: "AI Voice Cloning", scenario: "Aapko apne 'pote' (grandson) ka call aata hai. Woh ro raha hai, ghabraya hua hai, aur kehta hai ki woh jail mein hai. Awaaz bilkul uski jaisi hai.", options: [{ text: "Turant paise bhejne ki details mangein.", score: 0 }, { text: "Phone kaatein aur uske personal mobile number par call karke verify karein.", score: 5 }, { text: "Usse police officer se baat karwane ko kahein.", score: 2 }] },
+                { id: 3, category: "Quishing (QR Phishing)", scenario: "Aap parking meter par hain. Card slot jam hai, lekin wahan ek sticker hai jis par QR code hai aur likha hai 'Scan to Pay Online'.", options: [{ text: "QR code scan karein aur website par pay karein.", score: 0 }, { text: "Google par official parking app dhundhein aur wahan pay karein.", score: 5 }, { text: "Aas-paas dusra meter dhundhein.", score: 2 }] },
+                { id: 4, category: "Job Scam / Fake Check", scenario: "LinkedIn par ek recruiter aapko remote data entry job offer karta hai. Woh aapko laptop kharidne ke liye $2,000 ka check bhejte hain.", options: [{ text: "Check deposit karein aur equipment kharidein.", score: 0 }, { text: "Check clear hone ka intezaar karein, phir kharidein.", score: 2 }, { text: "Mana kar dein. Asli companies khud equipment bhejti hain.", score: 5 }] },
+                { id: 5, category: "Tech Support Fraud", scenario: "Computer par ek popup aata hai jisme zor se siren baj raha hai: 'VIRUS DETECTED. Microsoft Support ko turant call karein.'", options: [{ text: "Screen par diye gaye number par call karein.", score: 0 }, { text: "Computer force restart karein aur apna antivirus run karein.", score: 5 }, { text: "Popup window mein 'Close' button dabayein.", score: 2 }] },
+                { id: 6, category: "Romance / Crypto Investment", scenario: "Aap dating app par kisi se mile. Baat jaldi aage badhi. Ek hafte baad, unhone kaha ki unhone crypto trading se $50k kamaye aur aapko sikhana chahte hain.", options: [{ text: "Poochein ki ye kaise kaam karta hai aur thoda invest karein.", score: 0 }, { text: "Pyar se sunein lekin apne paise alag rakhein.", score: 2 }, { text: "Baat karna band karein. Ye ek romance scam hai.", score: 5 }] },
+                { id: 7, category: "Phishing", scenario: "Aapko 'Netflix' se email aata hai: 'Payment declined. Update info to keep watching.' Sender ka address `support-netflix@gmail.com` hai.", options: [{ text: "Link par click karein aur login karein.", score: 0 }, { text: "Link par hover karke dekhein ki woh kahan ja raha hai.", score: 2 }, { text: "Spam mark karein. Netflix Gmail address use nahi karta.", score: 5 }] },
+                { id: 8, category: "Crypto Giveaway / Deepfake", scenario: "Ek mashhoor CEO Twitter par video post karte hain ki woh kisi specific wallet address par bheje gaye ETH/Bitcoin ko double kar denge.", options: [{ text: "Thoda amount bhej kar test karein.", score: 0 }, { text: "Maan lein ki account hack hua hai ya ye deepfake hai.", score: 5 }, { text: "Comments padhein ki dusron ko paise mile ya nahi.", score: 2 }] },
+                { id: 9, category: "MFA Fatigue", scenario: "Aapke phone par 10 notifications aate hain login approve karne ke liye. Phir 'IT Support' ka call aata hai code mangne ke liye taaki spam ruke.", options: [{ text: "Code de dein taaki notifications ruk jayein.", score: 0 }, { text: "Request deny karein aur turant password badal dein.", score: 5 }, { text: "Phone ko ek ghante ke liye band kar dein.", score: 2 }] },
+                { id: 10, category: "Fake Course Scam", scenario: "Aapke dost ki wife ek mehenga $2,000 ka online course kharidna chahti hai. Website thodi ajeeb lag rahi hai, lekin dawa karti hai ki unke paas 'exclusive secret' content hai.", options: [{ text: "Unhe kahein ki agar website ajeeb lag rahi hai, toh ye scam ho sakta hai.", score: 5 }, { text: "Kharidne ke liye kahein. 'Exclusive' content aksar aisi sites par hota hai.", score: 0 }, { text: "Website ke 'Testimonials' page ko padhne ko kahein.", score: 2 }] },
+                { id: 11, category: "Rental Scam", scenario: "Aapko ek bahut sasta aur accha apartment milta hai. Landlord kehta hai woh shahar se bahar hai lekin agar aap deposit pay karein toh woh chabi bhej dega.", options: [{ text: "PayPal jaise secure method se deposit pay karein.", score: 2 }, { text: "Zelle/CashApp se pay karein taaki ghar mil jaye.", score: 0 }, { text: "Ghar andar se dekhe bina paise dene se mana karein.", score: 5 }] },
+                { id: 12, category: "Overpayment Scam", scenario: "Aap online sofa bech rahe hain. Buyer full price + movers ke paise dene ko tayar hai, lekin chahta hai ki aap movers ko pehle Zelle se pay karein.", options: [{ text: "Maan lein, agar paise pehle mil rahe hain.", score: 0 }, { text: "Kahein sirf cash lenge, face-to-face.", score: 5 }, { text: "Movers se direct baat karne ko kahein.", score: 2 }] },
+                { id: 13, category: "Refund / Invoice Scam", scenario: "Aapko $399 ka 'Geek Squad Renewal' ka invoice aata hai. Aapke paas Geek Squad nahi hai.", options: [{ text: "Email mein diye number par call karke dispute karein.", score: 0 }, { text: "Ignore karein. Ye aapko darane ke liye fake invoice hai.", score: 5 }, { text: "Email par reply karke details mangein.", score: 2 }] },
+                { id: 14, category: "Business Email Compromise", scenario: "Aapke boss ka urgent email aata hai: 'Main meeting mein hoon. Client ke liye 5 Apple Gift Cards kharid lo. Main baad mein paise de dunga.'", options: [{ text: "Jaldi se kharid lein taaki boss khush ho.", score: 0 }, { text: "Boss ko alag se message ya call karke verify karein.", score: 5 }, { text: "Email sender se aur details mangein.", score: 2 }] },
+                { id: 15, category: "Data Harvesting", scenario: "Facebook par ek viral post hai: 'Aapke pehle pet ka naam kya tha? Mera Fluffy tha!'", options: [{ text: "Mazey ke liye comment mein naam likhein.", score: 0 }, { text: "Doston ke sath share karein.", score: 0 }, { text: "Scroll karein. Ye security questions guess karne ke liye hota hai.", score: 5 }] },
+                { id: 16, category: "Evil Twin WiFi", scenario: "Aap airport par hain. Aapko 'Free_Airport_WiFi_Official' naam ka network dikhta hai jo 'Open' hai.", options: [{ text: "Connect karein aur bank balance check karein.", score: 0 }, { text: "Connect karein lekin turant VPN use karein.", score: 2 }, { text: "Apna mobile data use karein.", score: 5 }] },
+                { id: 17, category: "Fleeceware", scenario: "Aap ek authenticator app download kar rahe hain. Ek app codes ke liye $5 per week mang raha hai.", options: [{ text: "Pay karein, security ke liye paise lagte hain.", score: 0 }, { text: "Google ya Microsoft Authenticator download karein (Free).", score: 5 }, { text: "Pehle reviews padhein.", score: 2 }] },
+                { id: 18, category: "Bank Impersonation", scenario: "Bank ka call aata hai. 'Aapke account mein fraud hua hai. SMS mein aaya 6-digit code bataiye verify karne ke liye.'", options: [{ text: "Turant code bata dein.", score: 0 }, { text: "Phone kaatein. Card ke peeche likhe number par call karein.", score: 5 }, { text: "Unse kahein ki pehle mera address verify karein.", score: 2 }] },
+                { id: 19, category: "Investment Group Scam", scenario: "Aapko WhatsApp par 'Insider Stock Tips' group mein add kiya gaya jisme 200 log hain.", options: [{ text: "Group mein rukein aur tips dekhein.", score: 2 }, { text: "Report karein aur turant exit karein.", score: 5 }, { text: "Admin ko message karein ki kisne add kiya.", score: 0 }] },
+                { id: 20, category: "Search Engine Poisoning", scenario: "Aapne Google par 'Airline Customer Support' search kiya. Pehla number jo 'Ad' tag ke sath aaya, us par call kiya.", options: [{ text: "Bharosa karein kyunki Google par hai.", score: 0 }, { text: "Niche scroll karke official website dhundhein.", score: 5 }, { text: "Check karein number 1-800 se shuru hota hai ya nahi.", score: 2 }] },
+                { id: 21, category: "Recovery Scam (Advanced)", scenario: "Pichle saal aap scam mein paise kho chuke hain. Achanak 'Blockchain Recovery Firm' se email aata hai ki unhe aapke paise mil gaye hain, bas 5% fees deni hogi.", options: [{ text: "Turant reply karein; 5% dekar paise wapas mil rahe hain.", score: 0 }, { text: "Baat karein lekin pehle paise dene se mana karein.", score: 2 }, { text: "Spam mark karein. Recovery firms blockchain access nahi kar sakti.", score: 5 }] },
+                { id: 22, category: "Push Notification / Social Engineering", scenario: "Phone par notification aata hai: 'Russia se login attempt'. Aap 'Deny' karte hain. Turant 'Apple Support' ka call aata hai account secure karne ke liye.", options: [{ text: "Call uthayein aur instructions follow karein.", score: 0 }, { text: "Phone kaatein. Scammers ne notification isliye bheja taaki call asli lage.", score: 5 }, { text: "Employee ID mangein.", score: 2 }] },
+                { id: 23, category: "Task Scam", scenario: "Aapne ek freelance job li. Dashboard par $800 earning dikh rahi hai. Paise nikalne ke liye, woh $50 deposit karne ko kehte hain 'wallet reset' ke liye.", options: [{ text: "$50 deposit karein; aap abhi bhi profit mein hain.", score: 0 }, { text: "Support se kahein ki earning mein se $50 kaat lein.", score: 2 }, { text: "Ruk jayein. Asli jobs salary dene ke liye paise nahi mangti.", score: 5 }] },
+                { id: 24, category: "Calendar Virus Injection", scenario: "Aapka iPhone calendar achanak events se bhar gaya: 'PHONE INFECTED - CLICK TO CLEAN'. Aapne koi invite accept nahi kiya.", options: [{ text: "Event link par click karke cleaning tool install karein.", score: 0 }, { text: "Settings > Calendar > Accounts mein jakar anjaan calendar delete karein.", score: 5 }, { text: "Factory reset karein.", score: 2 }] },
+                { id: 25, category: "Business Email Compromise (Hijack)", scenario: "Ek purane vendor ka email aata hai. History sahi hai, lekin woh kehte hain: 'Bank audit chal raha hai, invoice ke liye naya account number use karein.'", options: [{ text: "Naye account par paise bhej dein.", score: 0 }, { text: "Vendor ko purane number par call karke confirm karein.", score: 5 }, { text: "Bank se signed letter mangein.", score: 2 }] }
+            ],
+            zh: [
+                { id: 1, category: "杀猪盘 / 发错信息诈骗", scenario: "你收到一个陌生号码发来的短信：“嘿 Sarah，我们还去练瑜伽吗？” 你不是 Sarah。", options: [{ text: "礼貌回复“发错号码了，抱歉！”", score: 2 }, { text: "立即忽略并删除该信息。", score: 5 }, { text: "回复询问对方是谁；也许是老朋友。", score: 0 }] },
+                { id: 2, category: "AI 语音克隆", scenario: "你接到“孙子”的电话。他听起来很惊慌，哭着说他进了监狱。声音听起来和他一模一样。", options: [{ text: "立即询问汇款说明以帮助他。", score: 0 }, { text: "挂断电话，拨打他的个人手机号码进行核实。", score: 5 }, { text: "让他把警察叫到电话旁。", score: 2 }] },
+                { id: 3, category: "二维码钓鱼 (Quishing)", scenario: "你在停车收费表前。插卡口卡住了，但贴着一个二维码，上面写着“扫码在线支付”。", options: [{ text: "扫描二维码并通过打开的网站支付。", score: 0 }, { text: "谷歌搜索你所在城市的官方停车应用并在那里支付。", score: 5 }, { text: "寻找附近的另一个收费表。", score: 2 }] },
+                { id: 4, category: "招聘 / 假支票诈骗", scenario: "LinkedIn 上的一位招聘人员为你提供了一份远程数据录入工作。他们寄来一张 2,000 美元的支票，让你从他们的“供应商”那里购买笔记本电脑。", options: [{ text: "存入支票并购买设备。", score: 0 }, { text: "等支票结清后再购买设备。", score: 2 }, { text: "拒绝。正规公司会自己购买并寄送设备。", score: 5 }] },
+                { id: 5, category: "技术支持诈骗", scenario: "电脑上出现一个带有巨大警报声的弹窗：“检测到病毒。请立即致电 Microsoft 支持。”", options: [{ text: "拨打屏幕上的号码以快速修复。", score: 0 }, { text: "强制重启电脑并运行你自己的杀毒软件。", score: 5 }, { text: "点击弹窗内的“关闭”按钮。", score: 2 }] },
+                { id: 6, category: "杀猪盘 / 加密货币投资", scenario: "你在约会应用上认识了一个人。关系发展很快。一周后，他们提到自己通过交易加密货币赚了 5 万美元，并想教你。", options: [{ text: "让他们解释如何操作，并尝试投入少量资金。", score: 0 }, { text: "礼貌倾听，但保持财务独立。", score: 2 }, { text: "立即停止联系。这是浪漫诈骗。", score: 5 }] },
+                { id: 7, category: "网络钓鱼", scenario: "你收到来自 'Netflix' 的电子邮件：“付款被拒绝。更新信息以继续观看。” 发件人地址是 `support-netflix@gmail.com`。", options: [{ text: "点击链接并登录以检查你的账户状态。", score: 0 }, { text: "将鼠标悬停在链接上查看其指向。", score: 2 }, { text: "标记为垃圾邮件。Netflix 不使用 Gmail 地址。", score: 5 }] },
+                { id: 8, category: "加密货币赠送 / 深度伪造", scenario: "一位著名的 CEO 在 Twitter 上发布视频，声称会将发送到特定钱包地址的任何 ETH/比特币加倍返还。", options: [{ text: "发送少量资金测试是否真实。", score: 0 }, { text: "假设账户被黑或这是深度伪造 (Deepfake)。", score: 5 }, { text: "阅读评论看其他人是否收到了钱。", score: 2 }] },
+                { id: 9, category: "MFA 疲劳攻击", scenario: "你的手机收到 10 条通知要求批准登录。然后，你接到“IT 支持”的电话，要求提供验证码以停止骚扰。", options: [{ text: "给他们验证码以停止通知。", score: 0 }, { text: "拒绝请求并立即更改密码。", score: 5 }, { text: "关机一小时。", score: 2 }] },
+                { id: 10, category: "假课程 / 在线学习诈骗", scenario: "你朋友的妻子想购买她看到的一门价值 2,000 美元的昂贵在线课程。网站看起来有点可疑和不专业，但声称有“独家秘密”内容。", options: [{ text: "告诉她相信直觉。如果网站看起来可疑，很可能是诈骗或低质量内容。", score: 5 }, { text: "鼓励她购买。“独家”内容通常使用地下网站。", score: 0 }, { text: "告诉她阅读网站自己的“推荐”页面进行核实。", score: 2 }] },
+                { id: 11, category: "租赁诈骗", scenario: "你发现了一套价格极低的优质出租公寓。房东说他出城了，但如果你先付押金，他可以把钥匙寄给你。", options: [{ text: "通过 PayPal 等安全方式支付押金。", score: 2 }, { text: "按要求通过 Zelle/CashApp 支付以锁定房源。", score: 0 }, { text: "在看到房子内部之前拒绝支付任何费用。", score: 5 }] },
+                { id: 12, category: "多付欺诈", scenario: "你在网上卖沙发。买家提议全额付款并额外支付搬运工的费用，但他们需要你先通过 Zelle 支付搬运工。", options: [{ text: "同意，只要你先收到钱。", score: 0 }, { text: "告诉他们只收现金，当面交易。", score: 5 }, { text: "要求直接与搬运工交谈。", score: 2 }] },
+                { id: 13, category: "退款 / 发票诈骗", scenario: "你收到一张 399 美元的 'Geek Squad 续费' 电子邮件发票。你没有 Geek Squad 服务。", options: [{ text: "拨打电子邮件中的电话号码对费用提出异议。", score: 0 }, { text: "忽略它。这是旨在让你恐慌的假发票。", score: 5 }, { text: "回复电子邮件询问详情。", score: 2 }] },
+                { id: 14, category: "商务电子邮件入侵", scenario: "你的老板紧急给你发邮件：“我在开会。我需要你给客户买 5 张 Apple 礼品卡。我会报销你。”", options: [{ text: "快速购买以给老板留下好印象。", score: 0 }, { text: "通过内部渠道致电或发信息给老板进行核实。", score: 5 }, { text: "询问发件人更多细节。", score: 2 }] },
+                { id: 15, category: "数据收集", scenario: "Facebook 上的一篇病毒式帖子问：“你第一只宠物的名字叫什么？我的叫 Fluffy！”", options: [{ text: "在评论中写下你宠物的名字。", score: 0 }, { text: "与朋友分享帖子。", score: 0 }, { text: "滑过。这些是用来猜测安全问题的。", score: 5 }] },
+                { id: 16, category: "邪恶双子 WiFi", scenario: "你在机场。你看到一个名为 'Free_Airport_WiFi_Official' 的 WiFi 网络。它是一个“开放”网络。", options: [{ text: "连接并检查你的银行余额。", score: 0 }, { text: "连接但立即使用 VPN。", score: 2 }, { text: "使用你的蜂窝数据。", score: 5 }] },
+                { id: 17, category: "Fleeceware (高价订阅软件)", scenario: "你正在下载一个验证器应用。一个应用要求每周订阅 5 美元以生成验证码。", options: [{ text: "支付，安全值得花钱。", score: 0 }, { text: "下载 Google 或 Microsoft 验证器代替（免费）。", score: 5 }, { text: "先阅读评论。", score: 2 }] },
+                { id: 18, category: "银行冒充", scenario: "你的银行打来电话。“你的账户存在欺诈行为。请读出发送到你短信的 6 位数代码以验证身份。”", options: [{ text: "立即读给他们代码。", score: 0 }, { text: "挂断。拨打借记卡背面的号码。", score: 5 }, { text: "先让他们验证你的地址。", score: 2 }] },
+                { id: 19, category: "投资群诈骗", scenario: "你被拉入一个有 200 人的 '内部股票提示' WhatsApp 群组。", options: [{ text: "留在群里看他们给什么提示。", score: 2 }, { text: "举报并立即退出群组。", score: 5 }, { text: "发信息给管理员问是谁拉你进来的。", score: 0 }] },
+                { id: 20, category: "搜索引擎投毒", scenario: "你在 Google 上搜索 '航空公司客户支持'。你拨打了第一个出现的带有 'Ad'（广告）标签的号码。", options: [{ text: "相信它，因为它在 Google 上。", score: 0 }, { text: "向下滚动到官方网站查找号码。", score: 5 }, { text: "检查号码是否以 1-800 开头。", score: 2 }] },
+                { id: 21, category: "二次追回诈骗 (高级)", scenario: "你去年因诈骗损失了钱。你突然收到一封来自“区块链追回公司”的邮件，声称他们在冻结的账本上找到了你被盗的资金，并可以收取 5% 的法律费用将其取回。", options: [{ text: "立即回复；5% 的费用能拿回钱很划算。", score: 0 }, { text: "与他们接触，但拒绝支付预付费用。", score: 2 }, { text: "标记为垃圾邮件。追回公司无法访问冻结的区块链；这是“连环”诈骗。", score: 5 }] },
+                { id: 22, category: "推送通知 / 社会工程", scenario: "你手机收到通知：“尝试从俄罗斯登录”。你点击“拒绝”。紧接着，你的电话响了。是“Apple 支持”打来的，说要帮你保护账户，因为你刚刚拒绝了那次尝试。", options: [{ text: "接听并按照他们的指示保护账户。", score: 0 }, { text: "挂断。诈骗者触发通知是为了让他们的电话看起来合法。", score: 5 }, { text: "在继续之前询问他们的员工 ID。", score: 2 }] },
+                { id: 23, category: "任务诈骗 / 沉没成本", scenario: "你接受了一份“优化应用”的兼职工作。你登录仪表板看到 2 天赚了 800 美元。要提取工资，平台说你必须存入 50 美元以“重置钱包地址”，这笔钱会退还。", options: [{ text: "存入 50 美元；你仍然赚了 750 美元。", score: 0 }, { text: "联系客户支持从你的收入中扣除 50 美元。", score: 2 }, { text: "停止。合法的工作绝不需要你付钱才能领工资。", score: 5 }] },
+                { id: 24, category: "日历病毒注入", scenario: "你的 iPhone 日历突然被事件填满：“你的手机已感染 - 点击清理”。你最近没有接受任何日历邀请。", options: [{ text: "点击事件中的链接安装清理工具。", score: 0 }, { text: "转到设置 > 日历 > 账户，删除你不认识的任何订阅日历。", score: 5 }, { text: "立即恢复出厂设置。", score: 2 }] },
+                { id: 25, category: "商务电子邮件入侵 (会话劫持)", scenario: "你经营一家小企业。一位长期供应商给你发邮件。对话历史是正确的，但他们说：“我们的银行正在审计账户，请使用这个新账号支付附件中的发票。”发票看起来和以前的一样。", options: [{ text: "更新银行详细信息并支付发票以避免滞纳金。", score: 0 }, { text: "拨打已知的、以前使用过的号码（而不是邮件中的号码）与供应商口头确认。", score: 5 }, { text: "回复邮件要求他们提供银行的签名信。", score: 2 }] }
+            ],
+            ja: [
+                { id: 1, category: "豚の屠殺詐欺 / 間違い電話", scenario: "知らない番号から「サラ、ヨガの予定まだ大丈夫？」というSMSが届きました。あなたはサラではありません。", options: [{ text: "礼儀正しく「間違い電話ですよ」と返信する。", score: 2 }, { text: "無視してすぐにメッセージを削除する。", score: 5 }, { text: "誰ですかと返信する。古い友人かもしれない。", score: 0 }] },
+                { id: 2, category: "AI音声クローニング", scenario: "「孫」から電話がかかってきました。彼はパニックで泣いており、刑務所にいると言っています。声は彼そっくりです。", options: [{ text: "すぐに送金方法を聞いて助ける。", score: 0 }, { text: "電話を切り、本人の携帯番号にかけ直して確認する。", score: 5 }, { text: "警察官に電話を代わるよう頼む。", score: 2 }] },
+                { id: 3, category: "クイッシング (QRフィッシング)", scenario: "パーキングメーターにいます。カードスロットが詰まっていますが、「スキャンしてオンラインで支払う」というQRコードのステッカーがあります。", options: [{ text: "QRコードをスキャンして、開いたウェブサイトで支払う。", score: 0 }, { text: "その都市の公式駐車アプリをGoogle検索してそこで支払う。", score: 5 }, { text: "近くの別のメーターを探す。", score: 2 }] },
+                { id: 4, category: "雇用 / 偽小切手詐欺", scenario: "LinkedInのリクルーターがリモートのデータ入力の仕事を提案してきました。彼らはラップトップを「指定業者」から購入するために2,000ドルの小切手を送ってきました。", options: [{ text: "小切手を入金して機器を購入する。", score: 0 }, { text: "小切手が決済されるのを待ってから機器を購入する。", score: 2 }, { text: "断る。正規の会社は機器を自分で購入して送ってくる。", score: 5 }] },
+                { id: 5, category: "テクニカルサポート詐欺", scenario: "「ウイルスが検出されました。すぐにMicrosoftサポートに電話してください」という大きな警報音とともにポップアップが表示されました。", options: [{ text: "画面の番号に電話してすぐに直してもらう。", score: 0 }, { text: "コンピュータを強制再起動し、自分のウイルス対策ソフトを実行する。", score: 5 }, { text: "ポップアップウィンドウ内の「閉じる」ボタンをクリックする。", score: 2 }] },
+                { id: 6, category: "ロマンス / 暗号資産投資", scenario: "マッチングアプリで誰かと出会いました。進展は早いです。1週間後、彼らは暗号資産取引で5万ドル稼いだと言い、あなたに教えたいと言ってきました。", options: [{ text: "仕組みを聞いて、少額で試してみる。", score: 0 }, { text: "礼儀正しく聞くが、金銭関係は持たない。", score: 2 }, { text: "すぐに連絡を絶つ。これはロマンス詐欺だ。", score: 5 }] },
+                { id: 7, category: "フィッシング", scenario: "Netflixから「支払いが拒否されました。視聴を続けるために情報を更新してください」というメールが届きました。送信元アドレスは `support-netflix@gmail.com` です。", options: [{ text: "リンクをクリックしてログインし、アカウントの状態を確認する。", score: 0 }, { text: "リンクにカーソルを合わせて、どこに飛ぶか確認する。", score: 2 }, { text: "スパムとしてマークする。NetflixはGmailアドレスを使用しない。", score: 5 }] },
+                { id: 8, category: "暗号資産配布 / ディープフェイク", scenario: "有名なCEOがTwitterに動画を投稿し、特定のウォレットアドレスに送られたETH/ビットコインを倍にして返すと提案しています。", options: [{ text: "本物か試すために少額を送る。", score: 0 }, { text: "アカウントがハッキングされたか、ディープフェイクだと想定する。", score: 5 }, { text: "他の人が支払いを受けたかコメントを読む。", score: 2 }] },
+                { id: 9, category: "MFA疲労攻撃", scenario: "ログインを承認するよう求める通知がスマホに10回届きました。その後、「ITサポート」から電話があり、スパムを止めるためにコードを教えるよう求められました。", options: [{ text: "通知を止めるためにコードを教える。", score: 0 }, { text: "リクエストを拒否し、すぐにパスワードを変更する。", score: 5 }, { text: "1時間電源を切る。", score: 2 }] },
+                { id: 10, category: "偽講座 / オンライン学習詐欺", scenario: "友人の妻が、見たことのある2,000ドルの高額なオンラインレッスンを購入したがっています。ウェブサイトは少し怪しく素人っぽいですが、「独占的な秘密」のコンテンツがあると主張しています。", options: [{ text: "直感を信じるよう言う。怪しいサイトは詐欺か低品質の可能性が高い。", score: 5 }, { text: "買うように勧める。「独占的」なコンテンツはアングラなサイトを使うことが多い。", score: 0 }, { text: "そのサイトの「お客様の声」ページを読んで確認するよう言う。", score: 2 }] },
+                { id: 11, category: "賃貸詐欺", scenario: "とても安い素晴らしい賃貸アパートを見つけました。大家は町の外にいるが、先に敷金を払えば鍵を郵送できると言っています。", options: [{ text: "PayPalなどの安全な方法で敷金を払う。", score: 2 }, { text: "ZelleやCashAppで要求通りに支払い、物件を確保する。", score: 0 }, { text: "部屋の中を見るまでは支払いを断る。", score: 5 }] },
+                { id: 12, category: "過払い金詐欺", scenario: "オンラインでソファを売っています。買い手が定価＋引越し業者代を支払うと申し出ましたが、引越し業者にはZelleで先に支払ってほしいと言っています。", options: [{ text: "先にお金を受け取れるなら同意する。", score: 0 }, { text: "現金のみ、対面取引のみと伝える。", score: 5 }, { text: "引越し業者と直接話したいと頼む。", score: 2 }] },
+                { id: 13, category: "返金 / 請求書詐欺", scenario: "契約していないのに、399ドルの「Geek Squad更新」の請求書メールが届きました。", options: [{ text: "メールの電話番号に電話して請求に異議を唱える。", score: 0 }, { text: "無視する。パニックにさせるための偽の請求書だ。", score: 5 }, { text: "メールに返信して詳細を尋ねる。", score: 2 }] },
+                { id: 14, category: "ビジネスメール詐欺", scenario: "上司から緊急のメールが届きました。「会議中だ。クライアントのためにAppleギフトカードを5枚買ってきてくれ。後で精算する。」", options: [{ text: "上司に好印象を与えるためにすぐに買う。", score: 0 }, { text: "社内の別のチャネルで上司に電話かメッセージをして確認する。", score: 5 }, { text: "送信者にもっと詳細を尋ねる。", score: 2 }] },
+                { id: 15, category: "データ収集", scenario: "Facebookで話題の投稿があります。「あなたの最初のペットの名前は？私はフラッフィでした！」", options: [{ text: "楽しみのためにペットの名前をコメントする。", score: 0 }, { text: "友達に投稿をシェアする。", score: 0 }, { text: "スルーする。これらはセキュリティの質問を推測するのに使われる。", score: 5 }] },
+                { id: 16, category: "悪魔の双子 WiFi", scenario: "空港にいます。「Free_Airport_WiFi_Official」というWiFiネットワークが見えます。「公開」ネットワークです。", options: [{ text: "接続して銀行残高を確認する。", score: 0 }, { text: "接続するが、すぐにVPNを使用する。", score: 2 }, { text: "携帯電話のデータ通信を使用する。", score: 5 }] },
+                { id: 17, category: "フリースウェア", scenario: "認証アプリをダウンロードしています。あるアプリはコード生成のために週5ドルのサブスクリプションを求めています。", options: [{ text: "支払う。セキュリティはお金をかける価値がある。", score: 0 }, { text: "代わりにGoogleかMicrosoft Authenticator（無料）をダウンロードする。", score: 5 }, { text: "まずレビューを読む。", score: 2 }] },
+                { id: 18, category: "銀行なりすまし", scenario: "銀行から電話がありました。「口座に不正利用があります。本人確認のため、SMSに送られた6桁のコードを読み上げてください。」", options: [{ text: "すぐにコードを読み上げる。", score: 0 }, { text: "電話を切る。デビットカードの裏面の番号に電話する。", score: 5 }, { text: "まず住所を確認してもらう。", score: 2 }] },
+                { id: 19, category: "投資グループ詐欺", scenario: "200人のメンバーがいる「インサイダー株情報」というWhatsAppグループに追加されました。", options: [{ text: "どんな情報が出るか見るためにグループに残る。", score: 2 }, { text: "通報してすぐにグループを抜ける。", score: 5 }, { text: "管理者に誰が追加したのかメッセージで尋ねる。", score: 0 }] },
+                { id: 20, category: "検索エンジン汚染", scenario: "Googleで「航空会社 カスタマーサポート」と検索しました。「広告」タグが付いた最初に出た番号に電話しました。", options: [{ text: "Googleに出ているから信用する。", score: 0 }, { text: "公式サイトまでスクロールして番号を探す。", score: 5 }, { text: "番号が1-800で始まるか確認する。", score: 2 }] },
+                { id: 21, category: "回収詐欺 (上級)", scenario: "昨年詐欺で金銭を失いました。突然「ブロックチェーン回収会社」からメールがあり、凍結された台帳上に盗まれた資金を発見し、5%の法的手数料で回収できると主張しています。", options: [{ text: "すぐに返信する。5%でお金が戻るなら安いものだ。", score: 0 }, { text: "やり取りはするが、前払いは拒否する。", score: 2 }, { text: "スパムとしてマークする。回収業者が凍結されたブロックチェーンにアクセスすることはできない。これは便乗詐欺だ。", score: 5 }] },
+                { id: 22, category: "プッシュ通知 / ソーシャルエンジニアリング", scenario: "スマホに「ロシアからのログイン試行」という通知が来ました。「拒否」をタップしました。直後に電話が鳴りました。「Appleサポート」で、今拒否した試行があったためアカウントを保護すると言っています。", options: [{ text: "電話に出て、指示に従いアカウントを保護する。", score: 0 }, { text: "電話を切る。詐欺師は電話を正当に見せるために通知をトリガーしたのだ。", score: 5 }, { text: "進める前に社員IDを尋ねる。", score: 2 }] },
+                { id: 23, category: "タスク詐欺 / サンクコスト", scenario: "「アプリの最適化」というフリーランスの仕事を受けました。ダッシュボードにログインすると、2日で800ドル稼げたと表示されています。給料を引き出すには、「ウォレットアドレスをリセット」するために50ドルを入金する必要があり、後で返金されると言われました。", options: [{ text: "50ドルを入金する。まだ750ドルの利益がある。", score: 0 }, { text: "カスタマーサポートに連絡し、収益から50ドルを差し引くよう頼む。", score: 2 }, { text: "やめる。正規の仕事で給料をもらうためにお金を払うことは絶対にない。", score: 5 }] },
+                { id: 24, category: "カレンダーウイルス", scenario: "iPhoneのカレンダーが突然「携帯が感染しました - クリックして削除」というイベントで埋め尽くされました。最近カレンダーの招待を受け入れた覚えはありません。", options: [{ text: "イベント内のリンクをクリックして削除ツールをインストールする。", score: 0 }, { text: "設定 > カレンダー > アカウントに行き、見覚えのない購読カレンダーを削除する。", score: 5 }, { text: "すぐに工場出荷時の状態にリセットする。", score: 2 }] },
+                { id: 25, category: "ビジネスメール詐欺 (スレッド乗っ取り)", scenario: "あなたは小さな会社を経営しています。長年の取引先からメールが届きました。会話の履歴は正しいですが、「銀行が口座監査中のため、添付の請求書にはこの新しい口座番号を使ってください」と書かれています。", options: [{ text: "延滞料を避けるために銀行情報を更新して請求書を支払う。", score: 0 }, { text: "メールの番号ではなく、以前使っていた既知の番号で取引先に電話し、口頭で確認する。", score: 5 }, { text: "銀行からの署名入りレターを提出するようメールで返信する。", score: 2 }] }
+            ],
+            ru: [
+                { id: 1, category: "Убой свиней / Ошибочный номер", scenario: "Вы получили SMS с незнакомого номера: «Привет, Сара, мы все еще идем на йогу?». Вы не Сара.", options: [{ text: "Ответить «Вы ошиблись номером, извините», чтобы быть вежливым.", score: 2 }, { text: "Проигнорировать и немедленно удалить сообщение.", score: 5 }, { text: "Спросить, кто это; может быть, это старый друг.", score: 0 }] },
+                { id: 2, category: "Клонирование голоса ИИ", scenario: "Вам звонит «внук». Он плачет, паникует, говорит, что в тюрьме. Голос звучит в точности как у него.", options: [{ text: "Немедленно спросить реквизиты для перевода денег, чтобы помочь ему.", score: 0 }, { text: "Повесить трубку и позвонить на его личный мобильный для проверки.", score: 5 }, { text: "Попросить передать трубку полицейскому.", score: 2 }] },
+                { id: 3, category: "Квишинг (QR-фишинг)", scenario: "Вы у паркомата. Слот для карт застрял, но есть наклейка с QR-кодом: «Сканируйте для оплаты онлайн».", options: [{ text: "Сканировать код и оплатить через открывшийся сайт.", score: 0 }, { text: "Нагуглить официальное приложение парковки и оплатить там.", score: 5 }, { text: "Найти другой паркомат поблизости.", score: 2 }] },
+                { id: 4, category: "Работа / Поддельный чек", scenario: "Рекрутер в LinkedIn предлагает удаленную работу по вводу данных. Они присылают чек на $2,000 для покупки ноутбука у их «поставщика».", options: [{ text: "Обналичить чек и купить оборудование.", score: 0 }, { text: "Подождать, пока чек пройдет клиринг, затем купить.", score: 2 }, { text: "Отказаться. Легальные компании покупают и отправляют оборудование сами.", score: 5 }] },
+                { id: 5, category: "Мошенничество с техподдержкой", scenario: "На компьютере появляется окно с сиреной: «ОБНАРУЖЕН ВИРУС. Немедленно позвоните в поддержку Microsoft».", options: [{ text: "Позвонить по номеру на экране, чтобы быстро исправить.", score: 0 }, { text: "Принудительно перезагрузить ПК и запустить свой антивирус.", score: 5 }, { text: "Нажать кнопку «Закрыть» внутри всплывающего окна.", score: 2 }] },
+                { id: 6, category: "Романтика / Криптоинвестиции", scenario: "Вы познакомились в дейтинг-приложении. Все идет быстро. Через неделю они говорят, что заработали $50k на крипте и хотят научить вас.", options: [{ text: "Попросить объяснить, как это работает, и попробовать с малой суммой.", score: 0 }, { text: "Вежливо выслушать, но не смешивать финансы.", score: 2 }, { text: "Немедленно прекратить общение. Это романтическая афера.", score: 5 }] },
+                { id: 7, category: "Фишинг", scenario: "Письмо от 'Netflix': «Оплата отклонена. Обновите данные». Адрес отправителя: `support-netflix@gmail.com`.", options: [{ text: "Нажать на ссылку и войти, чтобы проверить статус.", score: 0 }, { text: "Навести курсор на ссылку, чтобы увидеть, куда она ведет.", score: 2 }, { text: "Пометить как спам. Netflix не использует адреса Gmail.", score: 5 }] },
+                { id: 8, category: "Раздача крипты / Дипфейк", scenario: "Известный CEO постит видео в Twitter, предлагая удвоить любые ETH/Bitcoin, отправленные на кошелек.", options: [{ text: "Отправить небольшую сумму для проверки.", score: 0 }, { text: "Предположить, что аккаунт взломан или это дипфейк.", score: 5 }, { text: "Почитать комментарии, получили ли другие деньги.", score: 2 }] },
+                { id: 9, category: "Усталость от MFA", scenario: "Вам приходит 10 уведомлений с просьбой подтвердить вход. Затем звонит «IT-поддержка» и просит код, чтобы остановить спам.", options: [{ text: "Дать им код, чтобы уведомления прекратились.", score: 0 }, { text: "Отклонить запросы и немедленно сменить пароль.", score: 5 }, { text: "Выключить телефон на час.", score: 2 }] },
+                { id: 10, category: "Фальшивые курсы", scenario: "Жена друга хочет купить дорогой онлайн-курс за $2,000. Сайт выглядит подозрительно, но обещает «эксклюзивный секретный» контент.", options: [{ text: "Сказать ей довериться чутью. Если сайт подозрительный, это скам.", score: 5 }, { text: "Посоветовать купить. «Эксклюзив» часто на подпольных сайтах.", score: 0 }, { text: "Посоветовать почитать отзывы на странице «Отзывы» самого сайта.", score: 2 }] },
+                { id: 11, category: "Аренда жилья", scenario: "Вы нашли отличную квартиру очень дешево. Хозяин говорит, что он не в городе, но пришлет ключи, если вы сначала внесете залог.", options: [{ text: "Внести залог через безопасный метод, типа PayPal.", score: 2 }, { text: "Оплатить через Zelle/CashApp, как просят, чтобы забронировать.", score: 0 }, { text: "Отказаться платить, пока не увидите квартиру внутри.", score: 5 }] },
+                { id: 12, category: "Переплата", scenario: "Вы продаете диван. Покупатель предлагает полную цену + за грузчиков, но просит вас сначала оплатить грузчиков через Zelle.", options: [{ text: "Согласиться, если деньги придут первыми.", score: 0 }, { text: "Сказать только наличные, при встрече.", score: 5 }, { text: "Попросить поговорить с грузчиками напрямую.", score: 2 }] },
+                { id: 13, category: "Возврат / Счет-фактура", scenario: "Пришел счет за «Продление Geek Squad» на $399. У вас нет Geek Squad.", options: [{ text: "Позвонить по номеру в письме, чтобы оспорить.", score: 0 }, { text: "Игнорировать. Это фальшивка, чтобы вызвать панику.", score: 5 }, { text: "Ответить на письмо, спросив детали.", score: 2 }] },
+                { id: 14, category: "Компрометация бизнес-почты", scenario: "Босс срочно пишет: «Я на встрече. Купи 5 подарочных карт Apple для клиента. Я возмещу».", options: [{ text: "Быстро купить, чтобы впечатлить босса.", score: 0 }, { text: "Позвонить или написать боссу в корпоративном мессенджере для проверки.", score: 5 }, { text: "Спросить у отправителя детали.", score: 2 }] },
+                { id: 15, category: "Сбор данных", scenario: "Вирусный пост в Facebook: «Как звали вашего первого питомца? Моего — Пушок!»", options: [{ text: "Написать имя питомца в комментариях ради веселья.", score: 0 }, { text: "Поделиться постом с друзьями.", score: 0 }, { text: "Пролистать. Это используют для подбора контрольных вопросов.", score: 5 }] },
+                { id: 16, category: "Злой двойник WiFi", scenario: "Вы в аэропорту. Видите сеть 'Free_Airport_WiFi_Official'. Это «Открытая» сеть.", options: [{ text: "Подключиться и проверить баланс банка.", score: 0 }, { text: "Подключиться, но сразу включить VPN.", score: 2 }, { text: "Использовать мобильный интернет.", score: 5 }] },
+                { id: 17, category: "Fleeceware", scenario: "Вы качаете приложение-аутентификатор. Одно просит подписку $5 в неделю за генерацию кодов.", options: [{ text: "Заплатить, безопасность стоит денег.", score: 0 }, { text: "Скачать Google или Microsoft Authenticator (Бесплатно).", score: 5 }, { text: "Сначала почитать отзывы.", score: 2 }] },
+                { id: 18, category: "Лже-банк", scenario: "Звонок из банка: «Подозрительная активность. Продиктуйте 6-значный код из СМС для проверки личности».", options: [{ text: "Немедленно продиктовать код.", score: 0 }, { text: "Повесить трубку. Позвонить по номеру на обороте карты.", score: 5 }, { text: "Спросить их, знают ли они ваш адрес.", score: 2 }] },
+                { id: 19, category: "Инвестиционная группа", scenario: "Вас добавили в WhatsApp-группу «Инсайдерские советы по акциям» с 200 людьми.", options: [{ text: "Остаться, чтобы посмотреть советы.", score: 2 }, { text: "Пожаловаться и немедленно выйти.", score: 5 }, { text: "Написать админу, спросить, кто добавил.", score: 0 }] },
+                { id: 20, category: "Отравление поисковика", scenario: "Вы гуглите «Поддержка авиакомпании». Звоните по первому номеру с пометкой «Реклама».", options: [{ text: "Довериться, это же Google.", score: 0 }, { text: "Пролистать до официального сайта.", score: 5 }, { text: "Проверить, начинается ли номер с 1-800.", score: 2 }] },
+                { id: 21, category: "Скам на возврате (Advanced)", scenario: "Вы потеряли деньги на скаме год назад. Приходит письмо от «Blockchain Recovery»: нашли ваши средства, вернут за 5% комиссии.", options: [{ text: "Ответить; 5% — малая цена за возврат.", score: 0 }, { text: "Общаться, но отказаться платить аванс.", score: 2 }, { text: "В спам. Фирмы не могут разморозить блокчейн; это повторный скам.", score: 5 }] },
+                { id: 22, category: "Push-уведомления / СИ", scenario: "Уведомление: «Попытка входа из России». Жмете «Отказать». Тут же звонок от «Apple Support», чтобы защитить аккаунт.", options: [{ text: "Ответить и следовать инструкциям.", score: 0 }, { text: "Повесить трубку. Скамеры вызвали уведомление, чтобы звонок казался реальным.", score: 5 }, { text: "Спросить ID сотрудника.", score: 2 }] },
+                { id: 23, category: "Задания / Невозвратные затраты", scenario: "Фриланс: «оптимизация приложений». Заработали $800. Чтобы вывести, нужно внести $50 для «сброса кошелька», их вернут.", options: [{ text: "Внести $50; вы все равно в плюсе на $750.", score: 0 }, { text: "Попросить поддержку вычесть $50 из заработка.", score: 2 }, { text: "Стоп. На реальной работе не нужно платить, чтобы получить зарплату.", score: 5 }] },
+                { id: 24, category: "Календарный вирус", scenario: "Календарь iPhone забит событиями: «ТЕЛЕФОН ЗАРАЖЕН — НАЖМИТЕ, ЧТОБЫ ОЧИСТИТЬ». Вы ничего не принимали.", options: [{ text: "Нажать ссылку в событии для установки очистки.", score: 0 }, { text: "Настройки > Календарь > Учетные записи, удалить незнакомые.", score: 5 }, { text: "Сброс до заводских настроек.", score: 2 }] },
+                { id: 25, category: "BEC (Перехват переписки)", scenario: "Давний поставщик пишет. История переписки верна, но: «У нас аудит, платите этот счет на новый номер счета».", options: [{ text: "Обновить реквизиты и оплатить.", score: 0 }, { text: "Позвонить поставщику по старому номеру (не из письма) для проверки.", score: 5 }, { text: "Ответить, попросив официальное письмо из банка.", score: 2 }] }
+            ]
         };
 
         const getImageUrl = (category) => {
+            if (!category) return "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80";
             const lowerCat = category.toLowerCase();
-            if (lowerCat.includes("crypto") || lowerCat.includes("investment")) return IMAGES.crypto;
-            if (lowerCat.includes("phone") || lowerCat.includes("voice") || lowerCat.includes("text") || lowerCat.includes("app")) return IMAGES.mobile;
-            if (lowerCat.includes("office") || lowerCat.includes("business") || lowerCat.includes("boss") || lowerCat.includes("job") || lowerCat.includes("course") || lowerCat.includes("learning")) return IMAGES.office;
-            if (lowerCat.includes("shopping") || lowerCat.includes("rent") || lowerCat.includes("card")) return IMAGES.shopping;
-            if (lowerCat.includes("phishing") || lowerCat.includes("email")) return IMAGES.phishing;
-            if (lowerCat.includes("social") || lowerCat.includes("dating")) return IMAGES.social;
-            if (lowerCat.includes("tech") || lowerCat.includes("virus") || lowerCat.includes("wifi")) return IMAGES.hacker;
-            return IMAGES.general;
+            if (lowerCat.includes("crypto") || lowerCat.includes("investment") || lowerCat.includes("invest")) return "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=800&q=80";
+            if (lowerCat.includes("phone") || lowerCat.includes("voice") || lowerCat.includes("text") || lowerCat.includes("app") || lowerCat.includes("push")) return "https://images.unsplash.com/photo-1512314889357-e157c22f938d?auto=format&fit=crop&w=800&q=80";
+            if (lowerCat.includes("office") || lowerCat.includes("business") || lowerCat.includes("boss") || lowerCat.includes("job") || lowerCat.includes("course") || lowerCat.includes("learning")) return "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=80";
+            if (lowerCat.includes("shopping") || lowerCat.includes("rent") || lowerCat.includes("card") || lowerCat.includes("check")) return "https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?auto=format&fit=crop&w=800&q=80";
+            if (lowerCat.includes("phishing") || lowerCat.includes("email") || lowerCat.includes("recovery")) return "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80";
+            if (lowerCat.includes("social") || lowerCat.includes("dating") || lowerCat.includes("facebook")) return "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80";
+            if (lowerCat.includes("tech") || lowerCat.includes("virus") || lowerCat.includes("wifi") || lowerCat.includes("calendar")) return "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80";
+            return "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80";
         };
 
-        // --- DATA: 25 Questions ---
-        const QUESTIONS = [
-            {
-                id: 1,
-                scenario: "You receive a text from an unknown number: 'Hey Sarah, are we still on for yoga?'. You are not Sarah.",
-                options: [
-                    { text: "Reply 'Wrong number, sorry!' to be polite.", score: 2 },
-                    { text: "Ignore and delete the message immediately.", score: 5 },
-                    { text: "Reply asking who this is; maybe it's an old friend.", score: 0 }
-                ],
-                category: "Pig Butchering / Wrong Number"
-            },
-            {
-                id: 2,
-                scenario: "You receive a call from your 'grandson'. He sounds panicked, crying, saying he's in jail. The voice sounds exactly like him.",
-                options: [
-                    { text: "Immediately ask for the wiring instructions to help him.", score: 0 },
-                    { text: "Hang up and call his personal mobile number to verify.", score: 5 },
-                    { text: "Ask him to put the police officer on the phone.", score: 2 }
-                ],
-                category: "AI Voice Cloning"
-            },
-            {
-                id: 3,
-                scenario: "You are at a parking meter. The card slot is jammed, but there is a sticker with a QR code that says 'Scan to Pay Online'.",
-                options: [
-                    { text: "Scan the QR code and pay via the website it opens.", score: 0 },
-                    { text: "Google the official parking app for your city and pay there.", score: 5 },
-                    { text: "Look for another meter nearby.", score: 2 }
-                ],
-                category: "Quishing (QR Phishing)"
-            },
-            {
-                id: 4,
-                scenario: "A recruiter on LinkedIn offers you a remote data entry job. They send a check for $2,000 to buy a laptop from their 'vendor'.",
-                options: [
-                    { text: "Deposit the check and buy the equipment.", score: 0 },
-                    { text: "Wait for the check to clear, then buy the equipment.", score: 2 },
-                    { text: "Refuse. Legitimate companies buy and ship equipment themselves.", score: 5 }
-                ],
-                category: "Employment / Fake Check"
-            },
-            {
-                id: 5,
-                scenario: "A popup appears on your computer with a loud siren: 'VIRUS DETECTED. Call Microsoft Support immediately.'",
-                options: [
-                    { text: "Call the number on the screen to fix it fast.", score: 0 },
-                    { text: "Force restart your computer and run your own antivirus.", score: 5 },
-                    { text: "Click the 'Close' button inside the popup window.", score: 2 }
-                ],
-                category: "Tech Support Fraud"
-            },
-            {
-                id: 6,
-                scenario: "You meet someone on a dating app. Things move fast. After a week, they mention they made $50k trading crypto and want to teach you.",
-                options: [
-                    { text: "Ask them to explain how it works and try with a small amount.", score: 0 },
-                    { text: "Politely listen but keep your finances separate.", score: 2 },
-                    { text: "Stop communication immediately. This is a romance scam.", score: 5 }
-                ],
-                category: "Romance / Crypto Investment"
-            },
-            {
-                id: 7,
-                scenario: "You get an email from 'Netflix': 'Payment declined. Update info to keep watching.' The sender address is `support-netflix@gmail.com`.",
-                options: [
-                    { text: "Click the link and log in to check your account status.", score: 0 },
-                    { text: "Hover over the link to see where it goes.", score: 2 },
-                    { text: "Mark as spam. Netflix doesn't use Gmail addresses.", score: 5 }
-                ],
-                category: "Phishing"
-            },
-            {
-                id: 8,
-                scenario: "A famous CEO posts a video on Twitter offering to double any ETH/Bitcoin sent to a specific wallet address.",
-                options: [
-                    { text: "Send a small amount to test if it's real.", score: 0 },
-                    { text: "Assume the account was hacked or it's a deepfake.", score: 5 },
-                    { text: "Read the comments to see if others got paid.", score: 2 }
-                ],
-                category: "Crypto Giveaway / Deepfake"
-            },
-            {
-                id: 9,
-                scenario: "You receive 10 notifications on your phone asking to approve a login. Then, you get a call from 'IT Support' asking for the code to stop the spam.",
-                options: [
-                    { text: "Give them the code to make the notifications stop.", score: 0 },
-                    { text: "Deny the requests and change your password immediately.", score: 5 },
-                    { text: "Turn off your phone for an hour.", score: 2 }
-                ],
-                category: "MFA Fatigue"
-            },
-            // --- UPDATED QUESTION 10 (High Ticket Course Scam) ---
-            {
-                id: 10,
-                scenario: "Your friend's wife wants to buy an expensive $2,000 online lesson she saw. The website looks a bit shady and unprofessional, but claims to have 'exclusive secret' content.",
-                options: [
-                    { text: "Tell her to trust her gut. If the site looks shady, it's likely a scam or low quality.", score: 5 },
-                    { text: "Encourage her to buy it. 'Exclusive' content often uses underground websites.", score: 0 },
-                    { text: "Tell her to read the reviews on the website's own 'Testimonials' page to verify it.", score: 2 }
-                ],
-                category: "Fake Course / Online Learning Scam"
-            },
-            {
-                id: 11,
-                scenario: "You find a great apartment for rent at a very low price. The landlord says they are out of town but can mail you the keys if you pay the deposit first.",
-                options: [
-                    { text: "Pay the deposit via a secure method like PayPal.", score: 2 },
-                    { text: "Pay via Zelle/CashApp as requested to secure the spot.", score: 0 },
-                    { text: "Refuse to pay anything until you see the inside of the unit.", score: 5 }
-                ],
-                category: "Rental Scam"
-            },
-            {
-                id: 12,
-                scenario: "You are selling a couch online. A buyer offers to pay full price + extra for movers, but they need you to pay the movers first via Zelle.",
-                options: [
-                    { text: "Agree, as long as you get the money first.", score: 0 },
-                    { text: "Tell them cash only, in person.", score: 5 },
-                    { text: "Ask to speak to the movers directly.", score: 2 }
-                ],
-                category: "Overpayment Scam"
-            },
-            {
-                id: 13,
-                scenario: "You receive an email invoice for 'Geek Squad Renewal' for $399. You don't have Geek Squad.",
-                options: [
-                    { text: "Call the phone number in the email to dispute the charge.", score: 0 },
-                    { text: "Ignore it. It's a fake invoice designed to panic you.", score: 5 },
-                    { text: "Reply to the email asking for details.", score: 2 }
-                ],
-                category: "Refund / Invoice Scam"
-            },
-            {
-                id: 14,
-                scenario: "Your boss emails you urgently: 'I'm in a meeting. I need you to buy 5 Apple Gift Cards for a client. I'll reimburse you.'",
-                options: [
-                    { text: "Buy them quickly to impress the boss.", score: 0 },
-                    { text: "Call or message your boss on a separate internal channel to verify.", score: 5 },
-                    { text: "Ask the email sender for more details.", score: 2 }
-                ],
-                category: "Business Email Compromise"
-            },
-            {
-                id: 15,
-                scenario: "A viral Facebook post asks: 'What was the name of your first pet? Mine was Fluffy!'",
-                options: [
-                    { text: "Comment with your pet's name for fun.", score: 0 },
-                    { text: "Share the post with friends.", score: 0 },
-                    { text: "Scroll past. These are used to guess security questions.", score: 5 }
-                ],
-                category: "Data Harvesting"
-            },
-            {
-                id: 16,
-                scenario: "You are at the airport. You see a WiFi network named 'Free_Airport_WiFi_Official'. It is an 'Open' network.",
-                options: [
-                    { text: "Connect and check your bank balance.", score: 0 },
-                    { text: "Connect but use a VPN immediately.", score: 2 },
-                    { text: "Use your cellular data instead.", score: 5 }
-                ],
-                category: "Evil Twin WiFi"
-            },
-            {
-                id: 17,
-                scenario: "You are downloading an authenticator app. One app asks for a weekly subscription of $5 to generate codes.",
-                options: [
-                    { text: "Pay it, security is worth the money.", score: 0 },
-                    { text: "Download Google or Microsoft Authenticator instead (Free).", score: 5 },
-                    { text: "Read the reviews first.", score: 2 }
-                ],
-                category: "Fleeceware"
-            },
-            {
-                id: 18,
-                scenario: "Your bank calls. 'There is fraud on your account. Read me the 6-digit code sent to your text to verify your identity.'",
-                options: [
-                    { text: "Read them the code immediately.", score: 0 },
-                    { text: "Hang up. Call the number on the back of your debit card.", score: 5 },
-                    { text: "Ask them to verify your address first.", score: 2 }
-                ],
-                category: "Bank Impersonation"
-            },
-            {
-                id: 19,
-                scenario: "You get added to a WhatsApp group about 'Insider Stock Tips' with 200 other people.",
-                options: [
-                    { text: "Stay in the group to see what tips they give.", score: 2 },
-                    { text: "Report and exit the group immediately.", score: 5 },
-                    { text: "Message the admin to ask who added you.", score: 0 }
-                ],
-                category: "Investment Group Scam"
-            },
-            {
-                id: 20,
-                scenario: "You search for 'Airline Customer Support' on Google. You dial the first number that appears with an 'Ad' tag.",
-                options: [
-                    { text: "Trust it because it's on Google.", score: 0 },
-                    { text: "Scroll down to the official website to find the number.", score: 5 },
-                    { text: "Check if the number starts with 1-800.", score: 2 }
-                ],
-                category: "Search Engine Poisoning"
-            },
-            // --- NEW SOPHISTICATED QUESTIONS (21-25) ---
-            {
-                id: 21,
-                scenario: "You lost money to a scam last year. You suddenly receive an email from a 'Blockchain Recovery Firm' claiming they found your stolen funds on a frozen ledger and can retrieve it for a 5% legal fee.",
-                options: [
-                    { text: "Respond immediately; 5% is a small price to get your money back.", score: 0 },
-                    { text: "Engage with them but refuse to pay upfront fees.", score: 2 },
-                    { text: "Mark as spam. Recovery firms cannot access frozen blockchains; this is a 'piggyback' scam.", score: 5 }
-                ],
-                category: "Recovery Scam (Advanced)"
-            },
-            {
-                id: 22,
-                scenario: "You get a notification on your phone: 'Attempted login from Russia'. You click 'Deny'. Immediately, your phone rings. It's 'Apple Support' calling to help you secure the account because of the attempt you just denied.",
-                options: [
-                    { text: "Answer and follow their instructions to secure the account.", score: 0 },
-                    { text: "Hang up. Scammers trigger the notification to make their call seem legitimate.", score: 5 },
-                    { text: "Ask them for their employee ID before proceeding.", score: 2 }
-                ],
-                category: "Push Notification / Social Engineering"
-            },
-            {
-                id: 23,
-                scenario: "You accepted a freelance job 'optimizing apps'. You log into a dashboard and see you've earned $800 in 2 days. To withdraw the salary, the platform says you must deposit $50 to 'reset the wallet address', which will be refunded.",
-                options: [
-                    { text: "Deposit the $50; you are still up $750 profit.", score: 0 },
-                    { text: "Contact customer support to deduct the $50 from your earnings.", score: 2 },
-                    { text: "Stop. Legitimate jobs never require you to pay money to get paid.", score: 5 }
-                ],
-                category: "Task Scam / Sunk Cost"
-            },
-            {
-                id: 24,
-                scenario: "Your iPhone Calendar suddenly fills up with events saying: 'YOUR PHONE IS INFECTED - CLICK TO CLEAN'. You did not accept any calendar invites recently.",
-                options: [
-                    { text: "Click the link in the event to install the cleaning tool.", score: 0 },
-                    { text: "Go to Settings > Calendar > Accounts and delete any subscribed calendars you don't recognize.", score: 5 },
-                    { text: "Factory reset your phone immediately.", score: 2 }
-                ],
-                category: "Calendar Virus Injection"
-            },
-            {
-                id: 25,
-                scenario: "You run a small business. A long-time vendor emails you. The conversation history is correct, but they say: 'Our bank is auditing accounts, please use this new account number for the invoice attached.' The invoice looks identical to previous ones.",
-                options: [
-                    { text: "Update the bank details and pay the invoice to avoid late fees.", score: 0 },
-                    { text: "Call the vendor on a known, previously used number (not the one in the email) to verbally confirm.", score: 5 },
-                    { text: "Reply to the email asking for a signed letter from their bank.", score: 2 }
-                ],
-                category: "Business Email Compromise (Thread Hijacking)"
-            }
-        ];
-
-        const MAX_SCORE = QUESTIONS.length * 5;
+        const MAX_SCORE = 25 * 5;
 
         // --- COMPONENTS ---
 
         // 1. Progress Bar
         const ProgressBar = ({ current, total }) => {
-            const percentage = ((current) / total) * 100;
+            const percentage = ((current + 1) / total) * 100;
             return (
                 <div className="w-full bg-slate-200 rounded-full h-2 mb-6 overflow-hidden">
                     <div 
@@ -331,14 +447,85 @@
             );
         };
 
-        // 2. Question Card (Enhanced with Images)
-        const QuestionCard = ({ question, onAnswer, questionIndex, totalQuestions }) => {
-            const imageUrl = getImageUrl(question.category);
+        // 2. Leaderboard Component (Mock)
+        const Leaderboard = ({ userScore, t }) => {
+            // Fake Data mixed with user score
+            const [data, setData] = useState([]);
+
+            useEffect(() => {
+                const mockScores = [
+                    { name: "CyberNinja99", score: 125, isUser: false },
+                    { name: "SafeSurfer", score: 120, isUser: false },
+                    { name: "Alex_Security", score: 115, isUser: false },
+                    { name: "SecureSam", score: 110, isUser: false },
+                    { name: "NetGuardian", score: 105, isUser: false },
+                ];
+                
+                // Add user and sort
+                const allScores = [...mockScores, { name: t.you, score: userScore, isUser: true }];
+                allScores.sort((a, b) => b.score - a.score);
+                
+                // Keep top 5 or ensure user is visible if lower
+                const top5 = allScores.slice(0, 5);
+                
+                // If user not in top 5, show top 4 + user
+                if (!top5.find(x => x.isUser)) {
+                   setData([...top5.slice(0, 4), { name: t.you, score: userScore, isUser: true, rank: allScores.findIndex(x => x.isUser) + 1 }]); 
+                } else {
+                   setData(top5);
+                }
+            }, [userScore]);
 
             return (
-                <div className="bg-white rounded-3xl shadow-xl fade-in max-w-2xl mx-auto border border-slate-100 overflow-hidden flex flex-col">
-                    {/* Image Header */}
-                    <div className="relative h-48 overflow-hidden">
+                <div className="mt-8 bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden">
+                    <div className="bg-slate-900 px-6 py-4">
+                        <h3 className="text-white font-bold flex items-center">
+                            <svg className="w-5 h-5 mr-2 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                            {t.leaderboardTitle}
+                        </h3>
+                    </div>
+                    <div className="p-4">
+                        <table className="w-full text-sm">
+                            <thead>
+                                <tr className="text-slate-400 border-b border-slate-100">
+                                    <th className="pb-2 text-left w-12">#</th>
+                                    <th className="pb-2 text-left">{t.user}</th>
+                                    <th className="pb-2 text-right">{t.score}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {data.map((item, idx) => (
+                                    <tr key={idx} className={`border-b border-slate-50 last:border-0 ${item.isUser ? 'bg-indigo-50' : ''}`}>
+                                        <td className="py-3 font-bold text-slate-500">
+                                            {item.rank || idx + 1}
+                                            {(idx === 0 && !item.rank) && " 👑"}
+                                        </td>
+                                        <td className={`py-3 font-medium ${item.isUser ? 'text-indigo-700 font-bold' : 'text-slate-700'}`}>
+                                            {item.name}
+                                            {item.isUser && <span className="ml-2 text-xs bg-indigo-200 text-indigo-800 px-2 py-0.5 rounded-full">You</span>}
+                                        </td>
+                                        <td className="py-3 text-right font-mono font-bold text-slate-900">{item.score}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            );
+        };
+
+        // 3. Question Card (Auto-advance logic)
+        const QuestionCard = ({ question, currentSelection, onSelect, onNext, onBack, questionIndex, totalQuestions, t }) => {
+            const imageUrl = getImageUrl(question.category);
+            
+            const handleOptionClick = (score) => {
+                if (currentSelection !== null) return; // Prevent double clicks
+                onSelect(score);
+            };
+
+            return (
+                <div className="bg-white rounded-3xl shadow-xl fade-in max-w-2xl mx-auto border border-slate-100 overflow-hidden flex flex-col h-full md:h-auto">
+                    <div className="relative h-40 md:h-48 overflow-hidden shrink-0">
                         <img 
                             src={imageUrl} 
                             alt={question.category}
@@ -347,48 +534,73 @@
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-6">
                             <div>
                                 <span className="inline-block px-3 py-1 bg-indigo-600/90 text-white text-xs font-bold rounded-full mb-2 backdrop-blur-sm tracking-wider uppercase">
-                                    Question {questionIndex + 1}/{totalQuestions}
+                                    {t.qPrefix} {questionIndex + 1}/{totalQuestions}
                                 </span>
                                 <h3 className="text-white font-bold text-lg drop-shadow-md">{question.category}</h3>
                             </div>
                         </div>
                     </div>
 
-                    <div className="p-6 md:p-8">
+                    <div className="p-6 md:p-8 flex flex-col grow">
                         <h2 className="text-xl md:text-2xl font-bold text-slate-800 mb-8 leading-relaxed">
                             {question.scenario}
                         </h2>
 
-                        <div className="space-y-4">
-                            {question.options.map((option, idx) => (
-                                <button
-                                    key={idx}
-                                    onClick={() => onAnswer(option.score)}
-                                    className="w-full text-left p-5 rounded-2xl border-2 border-slate-100 hover:border-indigo-500 hover:bg-indigo-50/50 transition-all duration-200 group relative overflow-hidden"
-                                >
-                                    <div className="flex items-start z-10 relative">
-                                        <div className="w-6 h-6 rounded-full border-2 border-slate-300 group-hover:border-indigo-500 mr-4 flex-shrink-0 flex items-center justify-center mt-0.5">
-                                            <div className="w-2.5 h-2.5 rounded-full bg-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div className="space-y-4 mb-8 grow">
+                            {question.options.map((option, idx) => {
+                                const isSelected = currentSelection === option.score;
+                                return (
+                                    <button
+                                        key={idx}
+                                        onClick={() => handleOptionClick(option.score)}
+                                        className={`w-full text-left p-5 rounded-2xl border-2 transition-all duration-200 group relative overflow-hidden option-card 
+                                            ${isSelected 
+                                                ? 'border-indigo-600 bg-indigo-50 shadow-md ring-2 ring-indigo-200 transform scale-[1.02]' 
+                                                : 'border-slate-100 hover:border-indigo-300'
+                                            }
+                                        `}
+                                    >
+                                        <div className="flex items-start z-10 relative">
+                                            <div className={`w-6 h-6 rounded-full border-2 mr-4 flex-shrink-0 flex items-center justify-center mt-0.5 transition-colors option-dot-container
+                                                ${isSelected ? 'border-indigo-600' : 'border-slate-300'}
+                                            `}>
+                                                <div className={`w-2.5 h-2.5 rounded-full bg-indigo-600 transition-opacity option-dot ${isSelected ? 'opacity-100' : 'opacity-0'}`}></div>
+                                            </div>
+                                            <span className={`font-medium text-lg transition-colors ${isSelected ? 'text-indigo-900' : 'text-slate-700'}`}>{option.text}</span>
                                         </div>
-                                        <span className="text-slate-700 group-hover:text-slate-900 font-medium text-lg">{option.text}</span>
-                                    </div>
-                                </button>
-                            ))}
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        <div className="flex justify-start items-center pt-6 border-t border-slate-100 mt-auto">
+                            <button 
+                                onClick={onBack}
+                                disabled={questionIndex === 0}
+                                className={`flex items-center space-x-2 font-bold px-6 py-3 rounded-xl transition-colors
+                                    ${questionIndex === 0 
+                                        ? 'text-slate-300 cursor-not-allowed' 
+                                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+                                    }`}
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                                <span>{t.back}</span>
+                            </button>
+                            <span className="ml-auto text-xs text-slate-400 italic hidden md:block">Select an option to advance</span>
                         </div>
                     </div>
                 </div>
             );
         };
 
-        // 3. Payment Modal (Placeholder)
-        const PaymentModal = ({ isOpen, onClose, onSuccess }) => {
+        // 4. Payment Modal
+        const PaymentModal = ({ isOpen, onClose, onSuccess, t }) => {
             const [processing, setProcessing] = useState(false);
 
             if (!isOpen) return null;
 
             const handlePay = () => {
                 setProcessing(true);
-                // Simulate network request
                 setTimeout(() => {
                     setProcessing(false);
                     onSuccess();
@@ -408,13 +620,13 @@
                             <div className="bg-indigo-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-600"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                             </div>
-                            <h3 className="text-2xl font-bold text-slate-900">Unlock Your Analysis</h3>
-                            <p className="text-slate-500 mt-2 text-sm px-4">See exactly where you are vulnerable and get your personalized defense strategy.</p>
+                            <h3 className="text-2xl font-bold text-slate-900">{t.payTitle}</h3>
+                            <p className="text-slate-500 mt-2 text-sm px-4">{t.payDesc}</p>
                         </div>
 
                         <div className="bg-slate-50 p-5 rounded-2xl mb-8 border border-slate-100">
                             <div className="flex justify-between items-center mb-3">
-                                <span className="text-slate-600 font-medium">Detailed Risk Report</span>
+                                <span className="text-slate-600 font-medium">{t.payItem}</span>
                                 <span className="font-bold text-slate-900">$4.99</span>
                             </div>
                             <div className="h-px bg-slate-200 my-3"></div>
@@ -435,11 +647,11 @@
                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
-                                    <span>Processing...</span>
+                                    <span>{t.processing}</span>
                                 </>
                             ) : (
                                 <>
-                                    <span>Pay & Unlock</span>
+                                    <span>{t.payBtn}</span>
                                 </>
                             )}
                         </button>
@@ -448,25 +660,24 @@
             );
         };
 
-        // 4. Results View
-        const Results = ({ score, maxScore, onReset, answers }) => {
+        // 5. Results View
+        const Results = ({ score, maxScore, onReset, answers, t, questions }) => {
             const [showModal, setShowModal] = useState(false);
             const [isPremium, setIsPremium] = useState(false);
 
             const percentage = Math.round((score / maxScore) * 100);
             
-            let rating = { label: "Unknown", color: "text-slate-500", bg: "bg-slate-100", border: "border-slate-200", advice: "Please retake the test." };
-            if (percentage >= 92) rating = { label: "Security Architect", color: "text-emerald-600", bg: "bg-emerald-50", border: "border-emerald-200", advice: "Outstanding. You spotted the subtlest red flags." };
-            else if (percentage >= 75) rating = { label: "Cyber Aware", color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-200", advice: "You are safe from most scams, but a targeted attack might trick you." };
-            else if (percentage >= 50) rating = { label: "Vulnerable", color: "text-orange-600", bg: "bg-orange-50", border: "border-orange-200", advice: "You have dangerous blind spots. Scammers can easily exploit your trust." };
-            else rating = { label: "High Risk Target", color: "text-red-600", bg: "bg-red-50", border: "border-red-200", advice: "You are statistically highly likely to lose money to fraud soon." };
+            let rating = { label: "Unknown", color: "text-slate-500", bg: "bg-slate-100", border: "border-slate-200", advice: "" };
+            if (percentage >= 92) rating = { label: t.scamProof, color: "text-emerald-600", bg: "bg-emerald-50", border: "border-emerald-200", advice: t.advice1 };
+            else if (percentage >= 75) rating = { label: t.cautious, color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-200", advice: t.advice2 };
+            else if (percentage >= 50) rating = { label: t.vulnerable, color: "text-orange-600", bg: "bg-orange-50", border: "border-orange-200", advice: t.advice3 };
+            else rating = { label: t.highRisk, color: "text-red-600", bg: "bg-red-50", border: "border-red-200", advice: t.advice4 };
 
             return (
                 <div className="max-w-4xl mx-auto fade-in pb-20">
                     <div className="bg-white rounded-[2rem] shadow-xl overflow-hidden mb-8 border border-slate-200">
-                        {/* Score Header */}
                         <div className={`p-10 text-center ${rating.bg} border-b ${rating.border}`}>
-                            <p className="uppercase tracking-widest text-xs font-bold opacity-70 mb-4 text-slate-600">Lockai Security Score</p>
+                            <p className="uppercase tracking-widest text-xs font-bold opacity-70 mb-4 text-slate-600">{t.scoreTitle}</p>
                             <div className="relative inline-block">
                                 <h1 className="text-7xl md:text-8xl font-black text-slate-900 tracking-tighter mb-2">{score}</h1>
                                 <span className="absolute -top-2 -right-12 text-2xl text-slate-400 font-bold">/{maxScore}</span>
@@ -478,17 +689,18 @@
                             </div>
                         </div>
 
-                        {/* Analysis Body */}
                         <div className="p-8 md:p-12">
                             <div className="max-w-2xl mx-auto text-center mb-10">
-                                <h2 className="text-2xl font-bold text-slate-900 mb-4">What does this mean?</h2>
+                                <h2 className="text-2xl font-bold text-slate-900 mb-4">{t.meaning}</h2>
                                 <p className="text-lg text-slate-600 leading-relaxed">
-                                    {rating.advice} Modern scams rely on <span className="font-semibold text-slate-800">urgency</span> and <span className="font-semibold text-slate-800">context</span>, not just fake links.
+                                    {rating.advice} {t.meaningDesc}
                                 </p>
+                                
+                                <Leaderboard userScore={score} t={t} />
                             </div>
                             
                             {!isPremium ? (
-                                <div className="relative rounded-2xl overflow-hidden group cursor-pointer" onClick={() => setShowModal(true)}>
+                                <div className="relative rounded-2xl overflow-hidden group cursor-pointer mt-12" onClick={() => setShowModal(true)}>
                                     <div className="absolute inset-0 bg-slate-900 z-0">
                                         <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80" className="w-full h-full object-cover opacity-20" />
                                         <div className="absolute inset-0 bg-gradient-to-r from-slate-900 to-slate-900/80"></div>
@@ -500,32 +712,32 @@
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-indigo-400"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                                                 <span className="text-indigo-400 font-bold uppercase tracking-wider text-xs">Premium Report</span>
                                             </div>
-                                            <h3 className="text-2xl font-bold mb-2">See your detailed mistakes</h3>
-                                            <p className="text-slate-300">Unlock a question-by-question breakdown and learn how to recognize the traps you fell for.</p>
+                                            <h3 className="text-2xl font-bold mb-2">{t.unlockTitle}</h3>
+                                            <p className="text-slate-300">{t.unlockDesc}</p>
                                         </div>
                                         <button className="bg-white text-slate-900 hover:bg-indigo-50 font-bold py-4 px-8 rounded-xl shadow-lg transition-all transform group-hover:scale-105 whitespace-nowrap">
-                                            Unlock Now - $4.99
+                                            {t.unlockBtn}
                                         </button>
                                     </div>
                                 </div>
                             ) : (
-                                <div className="space-y-6 animate-pulse-once">
+                                <div className="space-y-6 animate-pulse-once mt-12">
                                     <div className="flex items-center justify-center space-x-2 text-emerald-600 font-bold mb-8 bg-emerald-50 py-3 rounded-lg">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                        <span>Full Analysis Unlocked</span>
+                                        <span>{t.premiumUnlocked}</span>
                                     </div>
                                     
                                     <div className="space-y-4">
-                                        {QUESTIONS.map((q, i) => {
+                                        {questions.map((q, i) => {
                                             const userScore = answers[i];
                                             const isCorrect = userScore === 5;
                                             return (
                                                 <div key={i} className={`p-6 rounded-xl border ${isCorrect ? 'border-slate-100 bg-white' : 'border-red-100 bg-red-50/50'}`}>
                                                     <div className="flex justify-between items-start mb-2">
-                                                        <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Question {i+1}</span>
+                                                        <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">{t.qPrefix} {i+1}</span>
                                                         {isCorrect ? 
-                                                            <span className="text-emerald-600 text-xs font-bold bg-emerald-100 px-2 py-1 rounded">Perfect (+5)</span> : 
-                                                            <span className="text-red-600 text-xs font-bold bg-red-100 px-2 py-1 rounded">Risk Detect (+{userScore})</span>
+                                                            <span className="text-emerald-600 text-xs font-bold bg-emerald-100 px-2 py-1 rounded">{t.perfect} (+5)</span> : 
+                                                            <span className="text-red-600 text-xs font-bold bg-red-100 px-2 py-1 rounded">{t.risk} (+{userScore})</span>
                                                         }
                                                     </div>
                                                     <p className="font-bold text-slate-800 mb-2">{q.scenario}</p>
@@ -533,8 +745,8 @@
                                                     
                                                     {!isCorrect && (
                                                         <div className="bg-white border border-slate-200 p-3 rounded-lg text-sm text-slate-600">
-                                                            <strong className="text-indigo-600 block mb-1">Expert Analysis:</strong>
-                                                            The correct action was: "{q.options.find(o => o.score === 5).text}"
+                                                            <strong className="text-indigo-600 block mb-1">{t.expert}:</strong>
+                                                            {t.correctAction} "{q.options.find(o => o.score === 5).text}"
                                                         </div>
                                                     )}
                                                 </div>
@@ -549,7 +761,7 @@
                     <div className="text-center">
                         <button onClick={onReset} className="inline-flex items-center text-slate-500 hover:text-indigo-600 font-bold text-sm transition-colors p-4">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><polyline points="1 4 1 10 7 10"></polyline><polyline points="23 20 23 14 17 14"></polyline><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path></svg>
-                            Start New Assessment
+                            {t.restart}
                         </button>
                     </div>
 
@@ -559,7 +771,8 @@
                         onSuccess={() => {
                             setShowModal(false);
                             setIsPremium(true);
-                        }} 
+                        }}
+                        t={t}
                     />
                 </div>
             );
@@ -567,27 +780,48 @@
 
         // --- MAIN APP ---
         const App = () => {
+            const [lang, setLang] = useState('en');
             const [started, setStarted] = useState(false);
             const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-            const [score, setScore] = useState(0);
             const [finished, setFinished] = useState(false);
-            const [answers, setAnswers] = useState([]);
+            
+            // Get current language resources
+            const t = UI_TEXT[lang];
+            const questions = QUESTIONS_DB[lang] || QUESTIONS_DB['en'];
+
+            const [answers, setAnswers] = useState(Array(questions.length).fill(null));
 
             const handleStart = () => setStarted(true);
 
-            const handleAnswer = (points) => {
-                const newScore = score + points;
-                const newAnswers = [...answers, points];
-                setScore(newScore);
-                setAnswers(newAnswers);
-
-                if (currentQuestionIndex + 1 < QUESTIONS.length) {
-                    setTimeout(() => {
-                        setCurrentQuestionIndex(currentQuestionIndex + 1);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }, 300);
+            // Unified Logic to move to next question
+            const goToNext = () => {
+                if (currentQuestionIndex < questions.length - 1) {
+                    setCurrentQuestionIndex(prev => prev + 1);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
                     setFinished(true);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            };
+
+            const handleSelect = (points) => {
+                const newAnswers = [...answers];
+                newAnswers[currentQuestionIndex] = points;
+                setAnswers(newAnswers);
+
+                // Auto Advance Logic with 300ms delay for visual feedback
+                setTimeout(() => {
+                    goToNext();
+                }, 300);
+            };
+
+            const handleNextButton = () => {
+                goToNext();
+            };
+
+            const handleBack = () => {
+                if (currentQuestionIndex > 0) {
+                    setCurrentQuestionIndex(prev => prev - 1);
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             };
@@ -595,13 +829,15 @@
             const handleReset = () => {
                 setStarted(false);
                 setCurrentQuestionIndex(0);
-                setScore(0);
                 setFinished(false);
-                setAnswers([]);
+                setAnswers(Array(questions.length).fill(null));
             };
 
+            // Calculate total score
+            const currentScore = answers.reduce((acc, curr) => acc + (curr || 0), 0);
+
             return (
-                <div className="min-h-screen bg-slate-50 flex flex-col selection:bg-indigo-100 selection:text-indigo-900">
+                <div className="min-h-screen bg-slate-50 flex flex-col selection:bg-indigo-100 selection:text-indigo-900" style={{ fontFamily: lang === 'zh' ? 'Noto Sans SC' : lang === 'ja' ? 'Noto Sans JP' : lang === 'hi' ? 'Noto Sans Devanagari' : 'Plus Jakarta Sans' }}>
                     {/* Navbar */}
                     <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 py-4 sticky top-0 z-40 transition-all">
                         <div className="max-w-6xl mx-auto flex justify-between items-center">
@@ -611,11 +847,29 @@
                                 </div>
                                 <span className="font-extrabold text-2xl tracking-tight text-slate-900">Lockai<span className="text-indigo-600">.</span></span>
                             </div>
-                            {!finished && started && (
-                                <div className="hidden md:block text-xs font-bold uppercase tracking-widest text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
-                                    In Progress
-                                </div>
-                            )}
+                            
+                            <div className="flex items-center space-x-4">
+                                {!started && (
+                                    <div className="relative group">
+                                        <button className="flex items-center space-x-1 text-sm font-bold text-slate-600 hover:text-indigo-600 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                                            <span>{lang === 'en' ? 'English' : lang === 'zh' ? '中文' : lang === 'ja' ? '日本語' : lang === 'hi' ? 'हिंदी' : 'Русский'}</span>
+                                        </button>
+                                        <div className="absolute right-0 mt-2 w-32 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden hidden group-hover:block z-50">
+                                            <button onClick={() => setLang('en')} className="block w-full text-left px-4 py-2 text-sm hover:bg-slate-50 text-slate-700">English</button>
+                                            <button onClick={() => setLang('zh')} className="block w-full text-left px-4 py-2 text-sm hover:bg-slate-50 text-slate-700">中文 (SC)</button>
+                                            <button onClick={() => setLang('ja')} className="block w-full text-left px-4 py-2 text-sm hover:bg-slate-50 text-slate-700">日本語</button>
+                                            <button onClick={() => setLang('hi')} className="block w-full text-left px-4 py-2 text-sm hover:bg-slate-50 text-slate-700">हिंदी</button>
+                                            <button onClick={() => setLang('ru')} className="block w-full text-left px-4 py-2 text-sm hover:bg-slate-50 text-slate-700">Русский</button>
+                                        </div>
+                                    </div>
+                                )}
+                                {!finished && started && (
+                                    <div className="hidden md:block text-xs font-bold uppercase tracking-widest text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
+                                        {t.progress}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </nav>
 
@@ -628,16 +882,16 @@
                                 <div className="text-center py-10 md:py-24 fade-in">
                                     <div className="inline-flex items-center justify-center p-2 px-5 mb-8 bg-white border border-slate-200 rounded-full shadow-sm text-sm font-semibold text-slate-600 transform hover:scale-105 transition-transform">
                                         <span className="w-2 h-2 bg-emerald-500 rounded-full mr-2.5 animate-pulse"></span>
-                                        Updated for 2025 Scam Trends
+                                        Updated 2025
                                     </div>
                                     <h1 className="text-5xl md:text-7xl font-black text-slate-900 mb-8 leading-tight tracking-tight">
-                                        Human error is the<br className="hidden md:block" />
+                                        {t.heroTitle1}<br className="hidden md:block" />
                                         <span className="relative inline-block mt-2 md:mt-0 text-indigo-600 bg-indigo-50 px-2 rounded-lg decoration-wavy underline decoration-indigo-200">
-                                            #1 security vulnerability.
+                                            {t.heroTitle2}
                                         </span>
                                     </h1>
                                     <p className="text-lg md:text-xl text-slate-600 mb-12 max-w-2xl mx-auto leading-relaxed">
-                                        Lockai tests your ability to detect sophisticated social engineering, from deepfake voice cloning to subtle recovery scams.
+                                        {t.heroDesc}
                                     </p>
                                     
                                     <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-6">
@@ -645,47 +899,53 @@
                                             onClick={handleStart}
                                             className="w-full md:w-auto px-10 py-5 text-lg font-bold text-white transition-all duration-300 bg-slate-900 rounded-2xl hover:bg-slate-800 shadow-xl hover:shadow-2xl hover:-translate-y-1 ring-4 ring-slate-100"
                                         >
-                                            Start Assessment
+                                            {t.startBtn}
                                         </button>
                                         <div className="flex items-center space-x-2 text-slate-500 text-sm font-medium">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                                            <span>Takes ~4 minutes</span>
+                                            <span>{t.timeEst}</span>
                                         </div>
                                     </div>
                                     
                                     <div className="mt-16 grid grid-cols-3 gap-4 max-w-lg mx-auto opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
                                         <div className="text-center">
                                             <div className="font-bold text-2xl text-slate-900">25</div>
-                                            <div className="text-xs text-slate-500 uppercase tracking-wide">Scenarios</div>
+                                            <div className="text-xs text-slate-500 uppercase tracking-wide">{t.statScenarios}</div>
                                         </div>
                                         <div className="text-center border-l border-r border-slate-200">
-                                            <div className="font-bold text-2xl text-slate-900">Yong Tau Foo</div>
-                                            <div className="text-xs text-slate-500 uppercase tracking-wide">Powered</div>
+                                            <div className="font-bold text-2xl text-slate-900">AI</div>
+                                            <div className="text-xs text-slate-500 uppercase tracking-wide">{t.statAI}</div>
                                         </div>
                                         <div className="text-center">
                                             <div className="font-bold text-2xl text-slate-900">100%</div>
-                                            <div className="text-xs text-slate-500 uppercase tracking-wide">Private</div>
+                                            <div className="text-xs text-slate-500 uppercase tracking-wide">{t.statPrivate}</div>
                                         </div>
                                     </div>
                                 </div>
                             ) : !finished ? (
                                 // QUIZ SCREEN
                                 <div className="w-full">
-                                    <ProgressBar current={currentQuestionIndex} total={QUESTIONS.length} />
+                                    <ProgressBar current={currentQuestionIndex} total={questions.length} />
                                     <QuestionCard 
-                                        question={QUESTIONS[currentQuestionIndex]} 
-                                        onAnswer={handleAnswer} 
+                                        question={questions[currentQuestionIndex]} 
+                                        currentSelection={answers[currentQuestionIndex]}
+                                        onSelect={handleSelect}
+                                        onNext={handleNextButton}
+                                        onBack={handleBack}
                                         questionIndex={currentQuestionIndex}
-                                        totalQuestions={QUESTIONS.length}
+                                        totalQuestions={questions.length}
+                                        t={t}
                                     />
                                 </div>
                             ) : (
                                 // RESULT SCREEN
                                 <Results 
-                                    score={score} 
+                                    score={currentScore} 
                                     maxScore={MAX_SCORE} 
                                     onReset={handleReset}
                                     answers={answers}
+                                    t={t}
+                                    questions={questions}
                                 />
                             )}
                         </div>
@@ -695,10 +955,9 @@
                     <footer className="bg-white border-t border-slate-200 py-10 text-center text-slate-500">
                         <div className="flex items-center justify-center space-x-2 mb-4 opacity-50">
                              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                             <span className="font-bold text-lg">Lockai</span>
+                             <span className="font-bold text-lg">{t.title}</span>
                         </div>
-                        <p className="text-sm">Built to make the digital world safer.</p>
-                        <p className="mt-2 text-xs text-slate-400">© 2025 Lockai. All rights reserved.</p>
+                        <p className="mt-2 text-xs text-slate-400">© 2025 {t.title}. All rights reserved.</p>
                     </footer>
                 </div>
             );
